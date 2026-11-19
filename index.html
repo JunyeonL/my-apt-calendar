@@ -4,39 +4,74 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#f8fafc" />
-  <meta name="description" content="개인용 청약 일정·자격·분양가 비교 대시보드" />
+  <meta name="description" content="개인용 청약 일정·순위·주택형별 공급 정보 대시보드" />
   <title>청약나침반 · My ApplyHome</title>
-  <link rel="stylesheet" href="styles.css" />
-  <script type="module" src="app.js"></script>
+  <link rel="stylesheet" href="styles.css?v=2" />
+  <script type="module" src="app.js?v=2"></script>
 </head>
 <body>
 <div class="shell">
   <header class="topbar">
     <div class="brand"><span class="brandmark" aria-hidden="true">⌂</span><div><strong>청약나침반</strong><small>MY APPLYHOME</small></div></div>
-    <div class="top-actions"><span class="top-pill" id="sync-indicator">데이터 확인 중</span><button id="settings-button" class="button button-primary" type="button">⚙ 내 청약 조건</button></div>
+    <div class="top-actions"><span class="top-pill" id="sync-indicator">데이터 확인 중</span><button id="settings-button" class="button button-primary" type="button">내 청약 조건</button></div>
   </header>
   <main class="main">
-    <div class="headline"><div><div class="eyebrow">PERSONAL SUBSCRIPTION DASHBOARD</div><h1>내게 맞는 청약만, 한눈에.</h1><p>청약 일정부터 지역·자격·분양가까지. 모집공고 확인을 위한 나만의 캘린더.</p></div><div class="today-block"><small>TODAY</small><strong id="today-label">-</strong></div></div>
+    <div class="headline"><div><div class="eyebrow">PERSONAL SUBSCRIPTION DASHBOARD</div><h1>내게 맞는 청약만, 한눈에.</h1><p id="profile-summary">내 청약 조건을 불러오는 중입니다.</p></div><div class="today-block"><small>TODAY</small><strong id="today-label">-</strong></div></div>
     <section id="data-warning" class="data-warning" hidden role="status"></section>
-    <section class="metrics" aria-label="청약 요약">
-      <div class="metric"><span>이번 달 접수</span><strong id="metric-month">—</strong><small>일정 기준</small></div>
-      <div class="metric"><span>기본 조건 충족 가능</span><strong id="metric-possible">—</strong><small>공고문 확인 전 예비 판정</small></div>
-      <div class="metric"><span>확인 필요한 청약</span><strong id="metric-review">—</strong><small>자격·시세 검토 대상</small></div>
-      <div class="metric"><span>관심 단지</span><strong id="metric-saved">0</strong><small>이 브라우저에 저장됨</small></div>
+    <div class="summary-heading"><h2>이번 달 접수 <span id="metric-month">—</span>개 단지</h2><p>일반공급 예비 분류 · 특별공급과 무순위는 별도 검토</p></div>
+    <section class="metrics" aria-label="일반공급 순위별 요약">
+      <div class="metric metric-local"><span>1순위 해당지역</span><strong id="metric-first_local">—</strong><small>해당지역 접수일 기준</small></div>
+      <div class="metric metric-other"><span>1순위 기타지역</span><strong id="metric-first_other">—</strong><small>기타경기·기타지역 포함</small></div>
+      <div class="metric metric-second"><span>2순위 가능</span><strong id="metric-second">—</strong><small>2순위 접수 일정 확인</small></div>
+      <div class="metric metric-review"><span>검토 필요</span><strong id="metric-review">—</strong><small>미확인 조건을 상세에서 확인</small></div>
     </section>
     <section class="workspace">
-      <div class="toolbar"><div class="month-nav"><button type="button" id="previous" class="icon-button" aria-label="이전 달">‹</button><h2 id="month-name">—</h2><button type="button" id="next" class="icon-button" aria-label="다음 달">›</button><button type="button" id="this-month" class="button button-small">이번 달</button></div><div class="right-filters"><label class="sr-only" for="region-filter">지역</label><select id="region-filter"><option value="capital">수도권 전체</option><option value="서울">서울</option><option value="경기">경기</option><option value="인천">인천</option><option value="all">전국</option></select><label class="sr-only" for="status-filter">가능 여부</label><select id="status-filter"><option value="all">전체 자격</option><option value="possible">기본 조건 충족</option><option value="review">추가 확인</option><option value="no">조건 미충족</option></select><label class="switch"><input type="checkbox" id="saved-only"/><span>관심만</span></label></div></div>
-      <div class="legend"><span><i class="dot dot-open"></i>기본 조건 충족</span><span><i class="dot dot-check"></i>검토 필요</span><span><i class="dot dot-no"></i>기본 조건 미충족</span><span class="legend-side">달력의 단지를 누르면 상세 정보를 볼 수 있어요</span></div>
-      <div id="calendar" class="calendar" role="grid" aria-label="청약 월간 일정"></div>
-      <div class="footnote">※ 개인 자격은 참고용 예비 분석이며, 최종 신청 가능 여부는 입주자모집공고문과 청약홈에서 확인해야 합니다. 예상 차액은 입력한 비교 시세와 분양최고가의 단순 차이로 세금·금융비용 등을 제외합니다.</div>
+      <div class="toolbar">
+        <div class="month-nav"><button type="button" id="previous" class="icon-button" aria-label="이전 달">‹</button><h2 id="month-name">—</h2><button type="button" id="next" class="icon-button" aria-label="다음 달">›</button><button type="button" id="this-month" class="button button-small">이번 달</button></div>
+        <div class="right-filters">
+          <label class="sr-only" for="region-filter">지역</label><select id="region-filter"><option value="capital">수도권 전체</option><option value="서울">서울</option><option value="경기">경기</option><option value="인천">인천</option><option value="all">전국</option></select>
+          <label class="sr-only" for="status-filter">일반공급 예비 분류</label><select id="status-filter"><option value="all">전체 순위</option><option value="first_local">1순위 해당지역 가능</option><option value="first_other">1순위 기타지역 가능</option><option value="second">2순위 가능</option><option value="review">검토 필요</option></select>
+          <label class="switch"><input type="checkbox" id="saved-only"/><span>관심 <span id="metric-saved">0</span></span></label>
+        </div>
+      </div>
+      <div class="legend"><span class="legend-label status-first_local">1순위 해당지역</span><span class="legend-label status-first_other">1순위 기타지역</span><span class="legend-label status-second">2순위</span><span class="legend-label status-review">검토 필요</span><span class="legend-side">월~금 접수 일정</span></div>
+      <div id="calendar" class="calendar" role="grid" aria-label="월요일부터 금요일까지 청약 월간 일정"></div>
+      <div class="footnote">가능 표시는 입력한 조건과 공식 API에 따른 예비 분류입니다. 최종 자격은 모집공고문에서 확인하세요. 토·일 일정은 달력에서 표시하지 않습니다.</div>
     </section>
-    <section class="bottom-section"><div><h3>이번 달 청약 목록</h3><p>캘린더에서 확인한 공고를 접수 시작일순으로 정리했어요.</p></div><div id="listings" class="listings"></div></section>
-    <footer>데이터: 한국부동산원 청약홈 공공데이터 API · 비공식 개인용 대시보드 · <a href="https://www.applyhome.co.kr" target="_blank" rel="noopener noreferrer">청약홈 방문 ↗</a></footer>
+    <section class="bottom-section"><div><h3>이번 달 청약 목록</h3><p>주택형별 분양가와 일반·특별공급 세대수를 상세에서 확인하세요.</p></div><div id="listings" class="listings"></div></section>
+    <footer>데이터: 한국부동산원 청약홈 공공데이터 API · 비공식 개인용 대시보드 · <a href="https://www.applyhome.co.kr" target="_blank" rel="noopener noreferrer">청약홈 방문</a></footer>
   </main>
 </div>
-<div id="modal-backdrop" class="modal-backdrop" hidden><div class="modal" role="dialog" aria-modal="true" aria-labelledby="detail-title"><button type="button" class="modal-close" id="detail-close" aria-label="닫기">×</button><div id="detail-content"></div></div></div>
-<div id="settings-backdrop" class="modal-backdrop" hidden><div class="modal settings-modal" role="dialog" aria-modal="true" aria-labelledby="settings-title"><button type="button" class="modal-close" id="settings-close" aria-label="닫기">×</button><div class="eyebrow">LOCAL ONLY · 브라우저에만 저장</div><h2 id="settings-title">내 청약 조건</h2><p class="muted">설정한 조건은 GitHub나 서버로 전송되지 않아요. 여러 기기에서 이용하려면 각각 입력해야 해요.</p><form id="profile-form">
-<div class="form-grid"><label>거주 시·도<select name="region"><option value="">선택해 주세요</option><option value="경기">경기</option><option value="서울">서울</option><option value="인천">인천</option><option value="기타">기타 지역</option></select></label><label>거주 시·군·구<input name="city" placeholder="예: 용인시" /></label><label>현재 지역 전입일<input type="date" name="residenceSince" /></label><label>청약통장 가입일<input type="date" name="accountSince" /></label><label>무주택 시작일<input type="date" name="homelessSince" /></label><label>주택 소유 여부<select name="ownsHome"><option value="unknown">미입력</option><option value="no">무주택</option><option value="yes">유주택</option></select></label><label>혼인일<input type="date" name="marriedAt" /></label><label>자녀 출생일 <span class="mini-muted">쉼표로 구분</span><input name="childBirths" placeholder="예: 2022-01-01, 2025-02-01" /></label><label>청약통장 예치금<select name="deposit"><option value="unknown">모름 / 미확인</option><option value="enough">희망 면적 기준 충족</option><option value="not-enough">미충족</option></select></label><label>관심 전용면적 (㎡)<input name="preferredArea" inputmode="decimal" type="number" min="1" max="300" step="1" value="84" /></label></div>
-<div class="settings-warning">소득·자산, 과거 당첨 이력, 재당첨 제한, 세대원 중복 신청 및 해당지역 우선공급은 자동 검증하지 않습니다. 가능 표시는 이 항목들이 충족되었다는 뜻이 아닙니다.</div>
-<div class="form-actions"><button type="button" class="button" id="profile-reset">입력 초기화</button><button type="submit" class="button button-primary">조건 저장</button></div></form></div></div>
+<div id="modal-backdrop" class="modal-backdrop" hidden><div class="modal detail-modal" role="dialog" aria-modal="true" aria-labelledby="detail-title"><button type="button" class="modal-close" id="detail-close" aria-label="닫기">×</button><div id="detail-content"></div></div></div>
+<div id="settings-backdrop" class="modal-backdrop" hidden><div class="modal settings-modal" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+<button type="button" class="modal-close" id="settings-close" aria-label="닫기">×</button>
+<div class="eyebrow">MY SUBSCRIPTION PROFILE</div><h2 id="settings-title">내 청약 조건</h2><p class="muted">개인 설정은 이 브라우저에 저장됩니다. 날짜의 일자를 모르면 혼인일·자녀 출생일은 연월까지만 입력할 수 있어요.</p>
+<div class="profile-import-area"><button type="button" class="button" id="profile-import-button">기본값 파일 불러오기</button><input type="file" accept="application/json,.json" id="profile-import-file" hidden /><span id="profile-feedback" role="status"></span></div>
+<form id="profile-form">
+  <div class="form-grid">
+    <label>거주 시·도<select name="region"><option value="">선택해 주세요</option><option value="경기">경기</option><option value="서울">서울</option><option value="인천">인천</option><option value="기타">기타 지역</option></select></label>
+    <label>거주 시·군·구<input name="city" placeholder="예: 용인시" /></label>
+    <label>현재 지역 전입일<input type="date" name="residenceSince" /><small class="mini-muted">정확한 날짜를 모르면 비워 두세요.</small></label>
+    <label>확인된 최소 거주기간 (개월)<input type="number" min="0" max="1200" name="residenceMinMonths" /></label>
+    <label>거주기간 확인 기준일<input type="date" name="residenceVerifiedAt" /></label>
+    <label>청약통장 가입일<input type="date" name="accountSince" /></label>
+    <label>무주택 시작일<input type="date" name="homelessSince" /></label>
+    <label>본인 주택 소유 여부<select name="ownsHome"><option value="unknown">미확인</option><option value="no">무주택</option><option value="yes">유주택</option></select></label>
+    <label>통장 확인금액 (만원)<input type="number" inputmode="decimal" min="0" step="1" name="depositAmountManwon" /><small class="mini-muted">현재 예치금과 같은지 확인해 주세요.</small></label>
+    <label>납입인정 횟수<input type="number" inputmode="numeric" min="0" step="1" name="paymentCount" /></label>
+    <label>예치금 직접 확인<select name="deposit"><option value="unknown">통장 금액으로 예비 계산</option><option value="enough">희망 면적 기준 충족</option><option value="not-enough">미충족</option></select></label>
+    <label>관심 전용면적 (㎡)<input name="preferredArea" inputmode="decimal" type="number" min="1" max="300" step="1" /></label>
+    <label>혼인일 또는 혼인 연월<input name="marriedAt" placeholder="YYYY-MM 또는 YYYY-MM-DD" /></label>
+    <label>자녀 수<input type="number" name="childrenCount" min="0" max="12" step="1" inputmode="numeric" /></label>
+    <label class="form-wide">확인된 자녀 출생일·출생월<input name="childBirths" placeholder="예: 2025-02, 2021-06-15" /><small class="mini-muted">알고 있는 출생일이나 출생월만 쉼표로 구분해 입력하세요.</small></label>
+  </div>
+  <details class="advanced-profile"><summary>1순위 추가 확인 조건</summary><div class="form-grid">
+    <label>세대주 여부<select name="householdHead"><option value="unknown">미확인</option><option value="yes">세대주</option><option value="no">세대주 아님</option></select></label>
+    <label>세대원 전원 무주택<select name="householdHomeless"><option value="unknown">미확인</option><option value="yes">전원 무주택 확인</option><option value="no">세대 내 유주택자 있음</option></select></label>
+    <label>최근 5년 세대 당첨 이력<select name="wonWithin5Years"><option value="unknown">미확인</option><option value="no">없음</option><option value="yes">있음</option></select></label>
+  </div></details>
+  <div class="settings-warning">규제지역은 세대주·세대 당첨 이력, 공공주택은 무주택 세대·소득·자산 등 확인이 필요한 경우 검토 필요로 표시합니다.</div>
+  <p id="profile-error" class="form-error" role="alert"></p>
+  <div class="form-actions"><button type="button" class="button" id="profile-reset">내 기본값으로 되돌리기</button><button type="submit" class="button button-primary">조건 저장</button></div>
+</form></div></div>
 </body></html>
