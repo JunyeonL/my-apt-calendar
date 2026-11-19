@@ -12,15 +12,15 @@ export const DEFAULT_PROFILE = {
   ...EMPTY_PROFILE,
   "region": "경기",
   "city": "용인시",
-  "residenceSince": "",
+  "residenceSince": "2023-11-20",
   "residenceMinMonths": 24,
   "residenceVerifiedAt": "2026-10-16",
   "accountSince": "2016-10-07",
   "homelessSince": "2025-10-17",
   "ownsHome": "no",
-  "marriedAt": "2019-02",
+  "marriedAt": "2019-02-17",
   "childBirths": [
-    "2025-02"
+    "2022-02-17", "2025-02-10"
   ],
   "childrenCount": 2,
   "deposit": "unknown",
@@ -28,9 +28,9 @@ export const DEFAULT_PROFILE = {
   "paymentCount": 121,
   "profileVerifiedAt": "2026-11-04",
   "preferredArea": 84,
-  "householdHead": "unknown",
-  "householdHomeless": "unknown",
-  "wonWithin5Years": "unknown"
+  "householdHead": "yes",
+  "householdHomeless": "yes",
+  "wonWithin5Years": "no"
 };
 export const STATUS = {
   first_local:{text:'1순위 해당지역 가능',short:'1순위·해당'},
