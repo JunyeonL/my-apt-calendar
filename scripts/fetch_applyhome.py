@@ -101,6 +101,17 @@ def safe_applyhome_url(value):
     return None
 
 
+def exclusive_area(model):
+    area = number(model.get('EXCLUSE_AR'))
+    if area is not None and area > 0:
+        return area
+    # APT/remaining APIs encode exclusive area in HOUSE_TY (e.g. 084.9409A).
+    # SUPLY_AR includes common space and must not be used as exclusive area.
+    match = re.match(r'^(\d+(?:\.\d+)?)', string(model.get('HOUSE_TY')))
+    area = number(match.group(1)) if match else None
+    return area if area is not None and area > 0 else None
+
+
 def normalize(row, category, models_by_id):
     manage_no = string(row.get('HOUSE_MANAGE_NO'))
     pblanc_no = string(row.get('PBLANC_NO'))
@@ -109,7 +120,7 @@ def normalize(row, category, models_by_id):
     model_list = []
     for model in matching:
         amount = number(model.get('LTTOT_TOP_AMOUNT'))
-        area = number(model.get('EXCLUSE_AR'))
+        area = exclusive_area(model)
         model_list.append({
             'type': string(model.get('HOUSE_TY')),
             'area': area,
