@@ -18,7 +18,7 @@
 
 ## 사용 전 필수 설정
 
-1. 저장소 [`JunyeonL/my-apt-calendar`](https://github.com/JunyeonL/my-apt-calendar)의 `main` 브랜치에 전체 소스를 올립니다. 개인 프로필은 공개 저장소에 포함하지 않습니다.
+1. 저장소 [`JunyeonL/my-apt-calendar`](https://github.com/JunyeonL/my-apt-calendar)의 `main` 브랜치에 전체 소스를 올립니다. 소유자가 승인한 개인 청약 기본값이 소스에 포함된 개인용 프로젝트입니다.
 2. [공공데이터포털 청약홈 분양정보 API](https://www.data.go.kr/data/15098547/openapi.do)에 활용신청하여 발급받은 **일반 인증키**를 준비합니다.
 3. [저장소 Actions secrets 설정](https://github.com/JunyeonL/my-apt-calendar/settings/secrets/actions)의 **New repository secret**에서 이름 `DATA_GO_KR_API_KEY`로 API 키를 입력합니다. Decoding/Encoding 형태 모두 지원합니다. 코드나 공개 JSON에 키를 기록하지 마세요.
 4. **Settings → Pages → Build and deployment → Source: GitHub Actions**로 선택합니다.
@@ -76,7 +76,7 @@ python3 -m unittest discover -s tests -v
 
 ## 개인 정보
 
-청약 프로필·관심 단지는 현재 브라우저에 저장합니다. `내 청약 조건 → 기본값 파일 불러오기`로 개인 설정 JSON을 한 번 적용하면 다음 방문에도 유지되고, `내 기본값으로 되돌리기`로 복원할 수 있습니다. 파일은 브라우저에서 읽으며 업로드하지 않습니다. HTTP 요청이나 공개 소스에 개인 프로필을 포함하지 않습니다. 혼인일·자녀 출생일은 연월만 아는 경우에도 일자를 만들어 넣지 않습니다. 브라우저 데이터가 삭제되면 개인 설정을 다시 적용해야 합니다.
+소유자가 승인한 개인 청약 기본값을 공개 소스에 포함하여 처음 접속할 때 자동 적용합니다. 예전 버전의 비어 있는 설정은 새 기본값으로 전환하고, 직접 입력하거나 불러온 실제 설정은 유지합니다. 이후 변경 내용·관심 단지는 현재 브라우저에 저장하며 `내 기본값으로 되돌리기`로 복원할 수 있습니다. 설정 파일 불러오기도 계속 지원합니다. 혼인일·자녀 출생일은 확인된 연월까지만 반영하며, 세대주·세대원 무주택·최근 당첨 이력은 확인되지 않았다면 미확인으로 둡니다. API 인증키·소득·연봉은 개인 기본값에 포함하지 않습니다.
 
 ## 데이터 출처
 
