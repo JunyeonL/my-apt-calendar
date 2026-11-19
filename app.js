@@ -70,7 +70,7 @@ function render(){
  else {
   $('listings').innerHTML=monthly.map(x=>{
    const e=eventsFor(x,profile).find(e=>monthKey(e.date)===key), as=evalFor(x), mo=choice(x), ma=marginFor(x,mo);
-   return `<button class="listing" type="button" data-listing="${esc(x.id)}"><span class="listing-date"><strong>${Number((e?.date||'').slice(8))||'-'}</strong><small>${esc(e?.label||'공고')}</small></span><span class="listing-info"><strong>${esc(x.name)}</strong><small>${esc(x.region)} · ${esc(x.address)} · ${esc(mo?`${Math.round(mo.area||0)}㎡`: '면적 미상')}</small></span><span class="listing-side"><span class="status-pill ${as.status==='review'?'review':as.status==='no'?'no':''}">${esc(as.text)}</span><strong>${esc(marginText(ma))}</strong></span></button>`;
+   return `<button class="listing" type="button" data-listing="${esc(x.id)}"><span class="listing-date"><strong>${Number((e?.date||'').slice(8))||'-'}</strong><small>${esc(e?.label||'공고')}</small></span><span class="listing-info"><strong>${esc(x.name)}</strong><small>${esc(x.region)} · ${esc(x.address)} · ${esc(mo?.area>0?`${Math.round(mo.area)}㎡`: '면적 미상')}</small></span><span class="listing-side"><span class="status-pill ${as.status==='review'?'review':as.status==='no'?'no':''}">${esc(as.text)}</span><strong>${esc(marginText(ma))}</strong></span></button>`;
   }).join('');
   $('listings').querySelectorAll('[data-listing]').forEach(el=>el.addEventListener('click',()=>{const x=monthly.find(x=>x.id===el.dataset.listing);if(x)openDetail(x)}));
  }
