@@ -25,6 +25,17 @@ ENDPOINTS = {
 }
 PAGE_SIZE = 500
 MAX_PAGES = 200
+SPECIAL_SUPPLY_FIELDS = {
+    'multiChild': 'MNYCH_HSHLDCO',
+    'newborn': 'NWBB_HSHLDCO',
+    'newlywed': 'NWWDS_HSHLDCO',
+    'firstHome': 'LFE_FRST_HSHLDCO',
+    'elderlyParent': 'OLD_PARNTS_SUPORT_HSHLDCO',
+    'institution': 'INSTT_RECOMEND_HSHLDCO',
+    'relocatedInstitution': 'TRANSR_INSTT_ENFSN_HSHLDCO',
+    'youth': 'YGMN_HSHLDCO',
+    'other': 'ETC_HSHLDCO',
+}
 
 
 def query(endpoint, key, page, conditions=None):
@@ -121,20 +132,26 @@ def normalize(row, category, models_by_id):
     for model in matching:
         amount = number(model.get('LTTOT_TOP_AMOUNT'))
         area = exclusive_area(model)
+        general_supply = number(model.get('SUPLY_HSHLDCO'))
+        special_supply = number(model.get('SPSPLY_HSHLDCO'))
         model_list.append({
             'type': string(model.get('HOUSE_TY')),
             'area': area,
             'priceManwon': amount if amount and amount > 0 else None,
-            'supply': number(model.get('SUPLY_HSHLDCO')),
-            'specialSupply': number(model.get('SPSPLY_HSHLDCO')),
+            'supply': general_supply,
+            'specialSupply': special_supply,
+            'totalSupply': general_supply + special_supply if general_supply is not None and special_supply is not None else None,
+            'specialBreakdown': {name: number(model.get(field)) for name, field in SPECIAL_SUPPLY_FIELDS.items()},
         })
     model_list.sort(key=lambda x: x['area'] if x['area'] is not None else 9999)
     general_keys = [
         'GNRL_RNK1_CRSPAREA_RCPTDE', 'GNRL_RNK1_CRSPAREA_ENDDE',
         'GNRL_RNK1_ETC_GG_RCPTDE', 'GNRL_RNK1_ETC_GG_ENDDE',
         'GNRL_RNK1_ETC_AREA_RCPTDE', 'GNRL_RNK1_ETC_AREA_ENDDE',
-        'GNRL_RNK2_CRSPAREA_RCPTDE', 'GNRL_RNK2_ETC_GG_RCPTDE',
-        'GNRL_RNK2_ETC_AREA_RCPTDE', 'SPSPLY_RCEPT_BGNDE',
+        'GNRL_RNK2_CRSPAREA_RCPTDE', 'GNRL_RNK2_CRSPAREA_ENDDE',
+        'GNRL_RNK2_ETC_GG_RCPTDE', 'GNRL_RNK2_ETC_GG_ENDDE',
+        'GNRL_RNK2_ETC_AREA_RCPTDE', 'GNRL_RNK2_ETC_AREA_ENDDE',
+        'GNRL_RCEPT_BGNDE', 'GNRL_RCEPT_ENDDE', 'SPSPLY_RCEPT_BGNDE',
         'SPSPLY_RCEPT_ENDDE', 'SUBSCRPT_RCEPT_BGNDE', 'SUBSCRPT_RCEPT_ENDDE',
         'RCEPT_BGNDE', 'RCEPT_ENDDE', 'PRZWNER_PRESNATN_DE',
     ]
@@ -151,6 +168,9 @@ def normalize(row, category, models_by_id):
         'announcementDate': date(row.get('RCRIT_PBLANC_DE')),
         'publicHousing': string(row.get('PUBLIC_HOUSE_SPCLW_APPLC_AT')).upper() == 'Y' or string(row.get('HOUSE_DTL_SECD_NM')) == '국민',
         'regulated': string(row.get('SPECLT_RDN_EARTH_AT')).upper() == 'Y' or string(row.get('MDAT_TRGET_AREA_SECD')).upper() == 'Y',
+        'speculative': string(row.get('SPECLT_RDN_EARTH_AT')).upper() == 'Y',
+        'overheated': string(row.get('MDAT_TRGET_AREA_SECD')).upper() == 'Y',
+        'publicDistrict': string(row.get('PUBLIC_HOUSE_EARTH_AT')).upper() == 'Y',
         'url': safe_applyhome_url(row.get('PBLANC_URL')),
         'dates': dates,
         'models': model_list,
