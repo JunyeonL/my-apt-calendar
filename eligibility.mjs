@@ -1,11 +1,36 @@
 /** Informational ranking; the announcement remains authoritative. */
-export const DEFAULT_PROFILE = {
+export const EMPTY_PROFILE = {
   region:'경기', city:'용인시', residenceSince:'', residenceMinMonths:0,
   residenceVerifiedAt:'', accountSince:'', homelessSince:'', ownsHome:'unknown',
   marriedAt:'', childBirths:[], childrenCount:0, deposit:'unknown',
   depositAmountManwon:null, paymentCount:null, profileVerifiedAt:'',
   preferredArea:84, householdHead:'unknown', householdHomeless:'unknown',
   wonWithin5Years:'unknown'
+};
+// Owner-approved defaults for this personal calendar.
+export const DEFAULT_PROFILE = {
+  ...EMPTY_PROFILE,
+  "region": "경기",
+  "city": "용인시",
+  "residenceSince": "",
+  "residenceMinMonths": 24,
+  "residenceVerifiedAt": "2026-10-16",
+  "accountSince": "2016-10-07",
+  "homelessSince": "2025-10-17",
+  "ownsHome": "no",
+  "marriedAt": "2019-02",
+  "childBirths": [
+    "2025-02"
+  ],
+  "childrenCount": 2,
+  "deposit": "unknown",
+  "depositAmountManwon": 418,
+  "paymentCount": 121,
+  "profileVerifiedAt": "2026-11-04",
+  "preferredArea": 84,
+  "householdHead": "unknown",
+  "householdHomeless": "unknown",
+  "wonWithin5Years": "unknown"
 };
 export const STATUS = {
   first_local:{text:'1순위 해당지역 가능',short:'1순위·해당'},
@@ -35,7 +60,7 @@ export function monthsBetween(start,end) {
   return (b[0]-a[0])*12+b[1]-a[1]-(b[2]<a[2]?1:0);
 }
 export function normalizeProfile(input={}) {
-  const p={...DEFAULT_PROFILE};
+  const p={...EMPTY_PROFILE,childBirths:[]};
   if (!input || typeof input!=='object' || Array.isArray(input)) return p;
   for (const key of ['region','city']) if (typeof input[key]==='string') p[key]=input[key].trim().slice(0,50);
   for (const key of ['residenceSince','residenceVerifiedAt','accountSince','homelessSince','profileVerifiedAt']) p[key]=normalizeDate(input[key]);
@@ -52,6 +77,21 @@ export function normalizeProfile(input={}) {
   p.childrenCount=Math.max(p.childrenCount,p.childBirths.length);
   p.preferredArea=p.preferredArea>0&&p.preferredArea<=300?p.preferredArea:84;
   return p;
+}
+function hasPersonalSettings(value) {
+  if(!value||typeof value!=='object'||Array.isArray(value)) return false;
+  const p=normalizeProfile(value);
+  return Boolean(p.accountSince||p.homelessSince||p.marriedAt||p.childrenCount||p.childBirths.length
+    ||p.ownsHome!=='unknown'||p.deposit!=='unknown'||p.depositAmountManwon!==null||p.paymentCount!==null
+    ||p.residenceSince||p.residenceMinMonths||p.householdHead!=='unknown'||p.householdHomeless!=='unknown'
+    ||p.wonWithin5Years!=='unknown'||(p.city&&p.city!==EMPTY_PROFILE.city)
+    ||(p.region&&p.region!==EMPTY_PROFILE.region)||p.preferredArea!==EMPTY_PROFILE.preferredArea);
+}
+export function resolveProfileState({saved=null,savedBaseline=null,legacy=null,legacyBaseline=null}={}) {
+  const object=value=>value&&typeof value==='object'&&!Array.isArray(value);
+  const baseline=normalizeProfile(object(savedBaseline)?savedBaseline:hasPersonalSettings(legacyBaseline)?legacyBaseline:DEFAULT_PROFILE);
+  const profile=normalizeProfile(object(saved)?saved:hasPersonalSettings(legacy)?legacy:baseline);
+  return {baseline,profile};
 }
 export function encodeProfile(profile) {
   const bytes=new TextEncoder().encode(JSON.stringify(normalizeProfile(profile)));
