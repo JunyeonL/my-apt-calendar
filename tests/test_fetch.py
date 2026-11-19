@@ -12,6 +12,12 @@ mod=importlib.util.module_from_spec(spec)
 spec.loader.exec_module(mod)
 
 class FetchTests(unittest.TestCase):
+    def test_apt_area_comes_from_model_type_not_supply_area(self):
+        self.assertEqual(mod.exclusive_area({'HOUSE_TY': '084.9409A', 'SUPLY_AR': '112.3'}), 84.9409)
+        self.assertEqual(mod.exclusive_area({'HOUSE_TY': '059.9900', 'EXCLUSE_AR': '59.99'}), 59.99)
+        self.assertIsNone(mod.exclusive_area({'HOUSE_TY': '미정', 'SUPLY_AR': '112.3'}))
+        self.assertIsNone(mod.exclusive_area({'HOUSE_TY': '000.0000'}))
+
     def test_filtered_pagination_uses_match_count(self):
         response = {'data': [{'HOUSE_MANAGE_NO': 1}], 'totalCount': 9999, 'matchCount': 1}
         with mock.patch.object(mod, 'query', return_value=response) as query:
