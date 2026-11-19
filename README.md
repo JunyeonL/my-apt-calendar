@@ -22,7 +22,7 @@
 3. [저장소 Actions secrets 설정](https://github.com/JunyeonL/my-apt-calendar/settings/secrets/actions)의 **New repository secret**에서 이름 `DATA_GO_KR_API_KEY`로 API 키를 입력합니다. Decoding/Encoding 형태 모두 지원합니다. 코드나 공개 JSON에 키를 기록하지 마세요.
 4. **Settings → Pages → Build and deployment → Source: GitHub Actions**로 선택합니다.
 5. [Actions 워크플로](https://github.com/JunyeonL/my-apt-calendar/actions/workflows/pages.yml)의 **Run workflow**를 실행합니다. `refresh_data`를 선택하면 공식 데이터를 수집합니다. 배포 주소는 `https://junyeonl.github.io/my-apt-calendar/`입니다.
-6. 이후 자동으로 한국시간 **매일 09:15, 17:15**에 수집 및 배포합니다. Actions 예약 실행은 지연되거나 건너뛸 수 있습니다.
+6. 이후 자동으로 한국시간 **매일 08:30, 17:00**에 수집 및 배포합니다. Actions 예약 실행은 지연되거나 건너뛸 수 있습니다.
 
 GitHub Actions `GITHUB_TOKEN`으로 커밋된 데이터 변경은 일반적으로 다른 workflow의 `push` 트리거를 재실행하지 않습니다. 따라서 이 프로젝트는 **하나의 workflow가 수집 → 데이터 커밋 → Pages 배포까지** 처리합니다.
 
