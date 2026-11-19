@@ -1,17 +1,21 @@
-import {assess,assessGeneral,eventsFor,chooseModel,normalizeDate,normalizeMonthOrDate,normalizeProfile,decodeProfileFragment,DEFAULT_PROFILE,STATUS,calendarWeeks} from './eligibility.mjs?v=2';
+import {assess,assessGeneral,eventsFor,chooseModel,normalizeDate,normalizeMonthOrDate,normalizeProfile,decodeProfileFragment,resolveProfileState,STATUS,calendarWeeks} from './eligibility.mjs?v=3';
 
 const $=id=>document.getElementById(id);
-const K_PROFILE='aptCompassProfileV2', K_DEFAULTS='aptCompassDefaultsV2', K_FAV='aptCompassFavoritesV1';
+const K_PROFILE='aptCompassProfileV3', K_DEFAULTS='aptCompassDefaultsV3', K_FAV='aptCompassFavoritesV1';
 const read=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback;}catch{return fallback;}};
 const save=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value));}catch{/* The active session remains usable. */}};
 const imported=decodeProfileFragment(location.hash);
-let baseline=normalizeProfile(read(K_DEFAULTS,DEFAULT_PROFILE));
-let profile=normalizeProfile(read(K_PROFILE,read('aptCompassProfileV1',baseline)));
+let {baseline,profile}=resolveProfileState({
+  saved:read(K_PROFILE,null),savedBaseline:read(K_DEFAULTS,null),
+  legacy:read('aptCompassProfileV2',read('aptCompassProfileV1',null)),
+  legacyBaseline:read('aptCompassDefaultsV2',null)
+});
 if(imported) {
   baseline=imported; profile=imported;
   save(K_DEFAULTS,baseline); save(K_PROFILE,profile);
   history.replaceState(null,'',location.pathname+location.search);
 }
+save(K_DEFAULTS,baseline); save(K_PROFILE,profile);
 let favorites=read(K_FAV,[]); if(!Array.isArray(favorites)) favorites=[];
 const koreanToday=()=>new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Seoul'});
 const today=koreanToday(), todayParts=today.split('-').map(Number);
