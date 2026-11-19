@@ -4,7 +4,8 @@ on:
   push:
     branches: [main]
   schedule:
-    - cron: '15 0,8 * * *' # Every day at 09:15 and 17:15 Asia/Seoul
+    - cron: '30 23 * * *' # Every day at 08:30 Asia/Seoul
+    - cron: '0 8 * * *' # Every day at 17:00 Asia/Seoul
   workflow_dispatch:
     inputs:
       refresh_data:
