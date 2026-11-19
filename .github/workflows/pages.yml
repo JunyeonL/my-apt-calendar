@@ -1,0 +1,109 @@
+name: Update and deploy personal ApplyHome calendar
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '15 0,8 * * *' # Every day at 09:15 and 17:15 Asia/Seoul
+  workflow_dispatch:
+    inputs:
+      refresh_data:
+        description: Fetch the official ApplyHome dataset before deployment
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: personal-calendar-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: main
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Validate application and collector
+        run: |
+          node --check app.js
+          node --test tests/eligibility.test.mjs
+          python -m unittest discover -s tests -v
+      - name: Check collection configuration
+        id: collection
+        env:
+          DATA_GO_KR_API_KEY: ${{ secrets.DATA_GO_KR_API_KEY }}
+          REFRESH_DATA: ${{ github.event_name != 'workflow_dispatch' || inputs.refresh_data }}
+        run: |
+          if [ "$REFRESH_DATA" != "true" ]; then
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "### Data collection skipped by request" >> "$GITHUB_STEP_SUMMARY"
+          elif [ -z "$DATA_GO_KR_API_KEY" ]; then
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::DATA_GO_KR_API_KEY is not configured; deploying the existing dataset."
+            echo "### API key required for live data" >> "$GITHUB_STEP_SUMMARY"
+            echo 'Add the DATA_GO_KR_API_KEY repository secret, then run this workflow again. Existing data is preserved.' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Fetch official ApplyHome API
+        if: steps.collection.outputs.enabled == 'true'
+        env:
+          DATA_GO_KR_API_KEY: ${{ secrets.DATA_GO_KR_API_KEY }}
+        run: python scripts/fetch_applyhome.py
+      - name: Save public dataset
+        if: steps.collection.outputs.enabled == 'true'
+        run: |
+          if git diff --quiet -- data/listings.json; then
+            echo "No dataset changes"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/listings.json
+          git commit -m "data: refresh ApplyHome announcements"
+          git push origin HEAD:main
+      - name: Build static website
+        run: |
+          mkdir -p dist/data
+          cp index.html styles.css app.js eligibility.mjs .nojekyll dist/
+          cp data/listings.json dist/data/
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          data = json.loads(Path('dist/data/listings.json').read_text())
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
+              summary.write(f"\n### Website dataset\nAnnouncements: {len(data['items'])}\n\nLast successful collection: {data['updatedAt'] or 'not collected yet'}\n")
+          PY
+      - uses: actions/upload-pages-artifact@v5.0.0
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/configure-pages@v6.0.0
+      - name: Deploy GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5.0.1
