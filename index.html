@@ -7,7 +7,7 @@
   <meta name="description" content="개인용 청약 일정·순위·주택형별 공급 정보 대시보드" />
   <title>청약나침반 · My ApplyHome</title>
   <link rel="stylesheet" href="styles.css?v=2" />
-  <script type="module" src="app.js?v=2"></script>
+  <script type="module" src="app.js?v=3"></script>
 </head>
 <body>
 <div class="shell">
@@ -45,7 +45,7 @@
 <div id="modal-backdrop" class="modal-backdrop" hidden><div class="modal detail-modal" role="dialog" aria-modal="true" aria-labelledby="detail-title"><button type="button" class="modal-close" id="detail-close" aria-label="닫기">×</button><div id="detail-content"></div></div></div>
 <div id="settings-backdrop" class="modal-backdrop" hidden><div class="modal settings-modal" role="dialog" aria-modal="true" aria-labelledby="settings-title">
 <button type="button" class="modal-close" id="settings-close" aria-label="닫기">×</button>
-<div class="eyebrow">MY SUBSCRIPTION PROFILE</div><h2 id="settings-title">내 청약 조건</h2><p class="muted">개인 설정은 이 브라우저에 저장됩니다. 날짜의 일자를 모르면 혼인일·자녀 출생일은 연월까지만 입력할 수 있어요.</p>
+<div class="eyebrow">MY SUBSCRIPTION PROFILE</div><h2 id="settings-title">내 청약 조건</h2><p class="muted">내 기본값이 미리 적용됩니다. 변경한 조건은 이 브라우저에 저장됩니다. 날짜의 일자를 모르면 혼인일·자녀 출생일은 연월까지만 입력할 수 있어요.</p>
 <div class="profile-import-area"><button type="button" class="button" id="profile-import-button">기본값 파일 불러오기</button><input type="file" accept="application/json,.json" id="profile-import-file" hidden /><span id="profile-feedback" role="status"></span></div>
 <form id="profile-form">
   <div class="form-grid">
