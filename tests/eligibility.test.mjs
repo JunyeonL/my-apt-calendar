@@ -1,6 +1,35 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {normalizeDate,normalizeMonthOrDate,monthsBetween,yearsBetween,eventsFor,assess,assessGeneral,chooseModel,relevantFirstRank,normalizeProfile,encodeProfile,decodeProfileFragment,calendarWeeks} from '../eligibility.mjs';
+import {normalizeDate,normalizeMonthOrDate,monthsBetween,yearsBetween,eventsFor,assess,assessGeneral,chooseModel,relevantFirstRank,normalizeProfile,encodeProfile,decodeProfileFragment,calendarWeeks,EMPTY_PROFILE,DEFAULT_PROFILE,resolveProfileState} from '../eligibility.mjs';
+
+test('first visit applies the approved personal defaults without importing a file',()=>{
+  const state=resolveProfileState();
+  assert.deepEqual(state.profile,DEFAULT_PROFILE);
+  assert.equal(state.profile.accountSince,'2016-10-07');
+  assert.equal(state.profile.homelessSince,'2025-10-17');
+  assert.equal(state.profile.childrenCount,2);
+  assert.equal(state.profile.marriedAt,'2019-02');
+  assert.equal(state.profile.householdHead,'unknown');
+});
+test('empty settings left by the old version no longer hide personal defaults',()=>{
+  const state=resolveProfileState({legacy:{...EMPTY_PROFILE},legacyBaseline:{...EMPTY_PROFILE}});
+  assert.deepEqual(state.profile,DEFAULT_PROFILE);
+  assert.deepEqual(state.baseline,DEFAULT_PROFILE);
+});
+test('existing personal settings and imported baselines are preserved on migration',()=>{
+  const custom=normalizeProfile({...DEFAULT_PROFILE,city:'수원시',depositAmountManwon:600});
+  const state=resolveProfileState({legacy:custom,legacyBaseline:DEFAULT_PROFILE});
+  assert.equal(state.profile.city,'수원시');
+  assert.equal(state.profile.depositAmountManwon,600);
+  assert.deepEqual(state.baseline,DEFAULT_PROFILE);
+});
+test('settings saved after this update remain authoritative even when cleared',()=>{
+  const state=resolveProfileState({saved:{...EMPTY_PROFILE},savedBaseline:DEFAULT_PROFILE});
+  assert.deepEqual(state.profile,EMPTY_PROFILE);
+  assert.deepEqual(state.baseline,DEFAULT_PROFILE);
+  state.profile.childBirths.push('2020-01');
+  assert.deepEqual(DEFAULT_PROFILE.childBirths,['2025-02']);
+});
 
 const basic=normalizeProfile({region:'경기',city:'용인시',accountSince:'2010-01-01',ownsHome:'no',depositAmountManwon:350,paymentCount:100,childrenCount:2,childBirths:['2025-03'],marriedAt:'2019-04'});
 const apt={id:'apt-test',category:'apt',name:'테스트 단지',region:'경기',address:'경기도 용인시 수지구',housingType:'민영',announcementDate:'2026-11-02',regulated:false,speculative:false,models:[{type:'059',area:59,priceManwon:60000},{type:'084',area:84,priceManwon:100000}],dates:{SPSPLY_RCEPT_BGNDE:'2026-11-16',GNRL_RNK1_CRSPAREA_RCPTDE:'2026-11-17',GNRL_RNK1_ETC_GG_RCPTDE:'2026-11-18',GNRL_RNK1_ETC_AREA_RCPTDE:'2026-11-19',GNRL_RNK2_CRSPAREA_RCPTDE:'2026-11-20',GNRL_RNK2_ETC_GG_RCPTDE:'2026-11-23',GNRL_RNK2_ETC_AREA_RCPTDE:'2026-11-24'}};
