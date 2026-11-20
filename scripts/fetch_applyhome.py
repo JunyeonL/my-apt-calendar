@@ -36,6 +36,32 @@ SPECIAL_SUPPLY_FIELDS = {
     'youth': 'YGMN_HSHLDCO',
     'other': 'ETC_HSHLDCO',
 }
+RECEIPT_PERIODS = [
+    ('SPSPLY_RCEPT_BGNDE', 'SPSPLY_RCEPT_ENDDE'),
+    ('SUBSCRPT_RCEPT_BGNDE', 'SUBSCRPT_RCEPT_ENDDE'),
+    ('GNRL_RCEPT_BGNDE', 'GNRL_RCEPT_ENDDE'),
+    ('RCEPT_BGNDE', 'RCEPT_ENDDE'),
+] + [(f'GNRL_RNK{rank}_{area}_RCPTDE', f'GNRL_RNK{rank}_{area}_ENDDE')
+     for rank in (1, 2) for area in ('CRSPAREA', 'ETC_GG', 'ETC_AREA')]
+
+
+def collection_window(today):
+    first = today.replace(day=1)
+    after = dt.date(first.year + (first.month + 1) // 12, (first.month + 1) % 12 + 1, 1)
+    return first.isoformat(), (after - dt.timedelta(days=1)).isoformat()
+
+
+def in_window(dates, notice, first, last):
+    periods = [(dates[start], dates.get(end) or dates[start])
+               for start, end in RECEIPT_PERIODS if dates.get(start)]
+    if not periods:
+        return bool(notice and first <= notice <= last)
+    return any(start <= last and max(start, end) >= first for start, end in periods)
+
+
+def receipt_dates(row):
+    keys = [key for pair in RECEIPT_PERIODS for key in pair]
+    return {key: date(row.get(key)) for key in [*keys, 'PRZWNER_PRESNATN_DE']}
 
 
 def query(endpoint, key, page, conditions=None):
@@ -144,18 +170,7 @@ def normalize(row, category, models_by_id):
             'specialBreakdown': {name: number(model.get(field)) for name, field in SPECIAL_SUPPLY_FIELDS.items()},
         })
     model_list.sort(key=lambda x: x['area'] if x['area'] is not None else 9999)
-    general_keys = [
-        'GNRL_RNK1_CRSPAREA_RCPTDE', 'GNRL_RNK1_CRSPAREA_ENDDE',
-        'GNRL_RNK1_ETC_GG_RCPTDE', 'GNRL_RNK1_ETC_GG_ENDDE',
-        'GNRL_RNK1_ETC_AREA_RCPTDE', 'GNRL_RNK1_ETC_AREA_ENDDE',
-        'GNRL_RNK2_CRSPAREA_RCPTDE', 'GNRL_RNK2_CRSPAREA_ENDDE',
-        'GNRL_RNK2_ETC_GG_RCPTDE', 'GNRL_RNK2_ETC_GG_ENDDE',
-        'GNRL_RNK2_ETC_AREA_RCPTDE', 'GNRL_RNK2_ETC_AREA_ENDDE',
-        'GNRL_RCEPT_BGNDE', 'GNRL_RCEPT_ENDDE', 'SPSPLY_RCEPT_BGNDE',
-        'SPSPLY_RCEPT_ENDDE', 'SUBSCRPT_RCEPT_BGNDE', 'SUBSCRPT_RCEPT_ENDDE',
-        'RCEPT_BGNDE', 'RCEPT_ENDDE', 'PRZWNER_PRESNATN_DE',
-    ]
-    dates = {key: date(row.get(key)) for key in general_keys}
+    public_law = {'Y': True, 'N': False}.get(string(row.get('PUBLIC_HOUSE_SPCLW_APPLC_AT')).upper())
     return {
         'id': unique_id,
         'name': string(row.get('HOUSE_NM')),
@@ -167,12 +182,13 @@ def normalize(row, category, models_by_id):
         'households': number(row.get('TOT_SUPLY_HSHLDCO')),
         'announcementDate': date(row.get('RCRIT_PBLANC_DE')),
         'publicHousing': string(row.get('PUBLIC_HOUSE_SPCLW_APPLC_AT')).upper() == 'Y' or string(row.get('HOUSE_DTL_SECD_NM')) == '국민',
+        'publicHousingLaw': public_law,
         'regulated': string(row.get('SPECLT_RDN_EARTH_AT')).upper() == 'Y' or string(row.get('MDAT_TRGET_AREA_SECD')).upper() == 'Y',
         'speculative': string(row.get('SPECLT_RDN_EARTH_AT')).upper() == 'Y',
         'overheated': string(row.get('MDAT_TRGET_AREA_SECD')).upper() == 'Y',
         'publicDistrict': string(row.get('PUBLIC_HOUSE_EARTH_AT')).upper() == 'Y',
         'url': safe_applyhome_url(row.get('PBLANC_URL')),
-        'dates': dates,
+        'dates': receipt_dates(row),
         'models': model_list,
     }
 
@@ -184,34 +200,30 @@ def main():
         print('DATA_GO_KR_API_KEY is absent. Existing dataset preserved.', file=sys.stderr)
         return 2
     today = dt.datetime.now(ZoneInfo('Asia/Seoul')).date()
-    cutoff = today - dt.timedelta(days=370)
-    upper = today + dt.timedelta(days=390)
-    conditions = {
-        'cond[RCRIT_PBLANC_DE::GTE]': cutoff.isoformat(),
-        'cond[RCRIT_PBLANC_DE::LTE]': upper.isoformat(),
-    }
-    # All four endpoints are fetched before touching existing data.
-    sections = {}
-    for category, (detail_endpoint, model_endpoint) in ENDPOINTS.items():
-        detail = fetch_all(detail_endpoint, key, conditions)
-        models = fetch_all(model_endpoint, key)
-        indexed = {}
-        for model in models:
-            pair = (string(model.get('HOUSE_MANAGE_NO')), string(model.get('PBLANC_NO')))
-            indexed.setdefault(pair, []).append(model)
-        sections[category] = [normalize(row, category, indexed) for row in detail]
+    first, last = collection_window(today)
+    # The API only filters by notice date. An older notice can still be open.
+    conditions = {'cond[RCRIT_PBLANC_DE::LTE]': last}
     items = []
-    for category, entries in sections.items():
-        for entry in entries:
-            when = entry['announcementDate']
-            if when and cutoff <= dt.date.fromisoformat(when) <= upper:
-                items.append(entry)
-    if not items:
-        raise RuntimeError('API returned no announcements in current window. Keeping existing dataset.')
+    saw_detail = False
+    for category, (detail_endpoint, model_endpoint) in ENDPOINTS.items():
+        for row in fetch_all(detail_endpoint, key, conditions):
+            saw_detail = True
+            if not in_window(receipt_dates(row), date(row.get('RCRIT_PBLANC_DE')), first, last):
+                continue
+            pair = (string(row.get('HOUSE_MANAGE_NO')), string(row.get('PBLANC_NO')))
+            if not all(pair):
+                raise ValueError('Missing notice identifiers; existing dataset preserved')
+            filters = {'cond[HOUSE_MANAGE_NO::EQ]': pair[0], 'cond[PBLANC_NO::EQ]': pair[1]}
+            models = fetch_all(model_endpoint, key, filters)
+            matching = [m for m in models if (string(m.get('HOUSE_MANAGE_NO')), string(m.get('PBLANC_NO'))) == pair]
+            items.append(normalize(row, category, {pair: matching}))
+    if not saw_detail:
+        raise RuntimeError('Both historical notice endpoints returned no rows. Keeping existing dataset.')
     items.sort(key=lambda x: (x['announcementDate'] or '', x['name']))
     payload = {
         'source': '한국부동산원 청약홈 공공데이터 API',
         'updatedAt': dt.datetime.now(dt.timezone.utc).isoformat(timespec='seconds'),
+        'window': {'first': first, 'last': last},
         'items': items,
     }
     DEST.parent.mkdir(parents=True, exist_ok=True)
