@@ -12,6 +12,28 @@ mod=importlib.util.module_from_spec(spec)
 spec.loader.exec_module(mod)
 
 class FetchTests(unittest.TestCase):
+    def test_two_month_window_rolls_at_korean_month_boundaries(self):
+        self.assertEqual(mod.collection_window(mod.dt.date(2026, 12, 31)), ('2026-12-01', '2027-01-31'))
+        self.assertEqual(mod.collection_window(mod.dt.date(2028, 1, 1)), ('2028-01-01', '2028-02-29'))
+
+    def test_receipts_crossing_months_are_kept_but_winner_dates_do_not_extend_retention(self):
+        window = ('2026-11-01', '2026-12-31')
+        dates = {'GNRL_RNK1_ETC_AREA_RCPTDE': '2026-10-30', 'GNRL_RNK1_ETC_AREA_ENDDE': '2026-11-02'}
+        self.assertTrue(mod.in_window(dates, '2026-06-01', *window))
+        self.assertFalse(mod.in_window({'RCEPT_BGNDE':'2026-10-02', 'PRZWNER_PRESNATN_DE':'2026-11-03'}, '2026-09-01', *window))
+        self.assertTrue(mod.in_window({}, '2026-12-31', *window))
+        self.assertFalse(mod.in_window({'RCEPT_BGNDE':'2027-01-01'}, '2026-12-01', *window))
+
+    def test_empty_window_expires_stale_data_without_fetching_models(self):
+        old = {'HOUSE_MANAGE_NO': 1, 'PBLANC_NO': 2, 'RCRIT_PBLANC_DE': '2020-01-01'}
+        with tempfile.TemporaryDirectory() as folder:
+            dest = pathlib.Path(folder) / 'listings.json'
+            dest.write_bytes(b'old data')
+            with mock.patch.object(mod, 'DEST', dest), mock.patch.dict(os.environ, {'DATA_GO_KR_API_KEY':'dummy'}), mock.patch.object(mod, 'fetch_all', side_effect=[[old], []]) as fetch:
+                self.assertEqual(mod.main(), 0)
+            self.assertEqual(fetch.call_count, 2)
+            self.assertEqual(json.loads(dest.read_text())['items'], [])
+
     def test_supply_breakdown_and_second_rank_dates(self):
         row={'HOUSE_MANAGE_NO':42,'PBLANC_NO':49,'HOUSE_NM':'테스트',
              'SPECLT_RDN_EARTH_AT':'Y','PUBLIC_HOUSE_EARTH_AT':'Y',
@@ -88,7 +110,8 @@ class FetchTests(unittest.TestCase):
             with mock.patch.object(mod, 'DEST', dest), mock.patch.dict(os.environ, {'DATA_GO_KR_API_KEY': 'dummy%2Bkey%3D'}), mock.patch.object(mod, 'fetch_all', side_effect=[[row], [], [], []]) as fetch:
                 self.assertEqual(mod.main(), 0)
             self.assertEqual(fetch.call_args_list[0].args[1], 'dummy+key=')
-            self.assertIn('cond[RCRIT_PBLANC_DE::GTE]', fetch.call_args_list[0].args[2])
+            self.assertIn('cond[RCRIT_PBLANC_DE::LTE]', fetch.call_args_list[0].args[2])
+            self.assertEqual(fetch.call_args_list[1].args[2], {'cond[HOUSE_MANAGE_NO::EQ]':'42', 'cond[PBLANC_NO::EQ]':'49'})
             payload = json.loads(dest.read_text())
             self.assertEqual(len(payload['items']), 1)
             self.assertNotIn('serviceKey', dest.read_text())

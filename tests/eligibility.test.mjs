@@ -1,34 +1,25 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {normalizeDate,normalizeMonthOrDate,monthsBetween,yearsBetween,eventsFor,assess,assessGeneral,chooseModel,relevantFirstRank,normalizeProfile,encodeProfile,decodeProfileFragment,calendarWeeks,EMPTY_PROFILE,DEFAULT_PROFILE,resolveProfileState} from '../eligibility.mjs';
+import {normalizeDate,normalizeMonthOrDate,monthsBetween,yearsBetween,eventsFor,assess,assessGeneral,chooseModel,relevantFirstRank,normalizeProfile,encodeProfile,decodeProfileFragment,calendarWeeks,EMPTY_PROFILE,DEFAULT_PROFILE,resolveProfile,profileOverrides,assessSpecial,compareCalendarEvents,onCalendarDay} from '../eligibility.mjs';
 
-test('first visit applies the approved personal defaults without importing a file',()=>{
-  const state=resolveProfileState();
-  assert.deepEqual(state.profile,DEFAULT_PROFILE);
-  assert.equal(state.profile.accountSince,'2016-10-07');
-  assert.equal(state.profile.homelessSince,'2025-10-17');
-  assert.equal(state.profile.childrenCount,2);
-  assert.equal(state.profile.marriedAt,'2019-02');
-  assert.equal(state.profile.householdHead,'unknown');
+test('first visit and reset take the editable deployment defaults',()=>{
+  assert.deepEqual(resolveProfile(),DEFAULT_PROFILE);
+  assert.deepEqual(resolveProfile({overrides:{}}),DEFAULT_PROFILE);
+  const birthDates=[...DEFAULT_PROFILE.childBirths];
+  resolveProfile().childBirths.push('2020-01');
+  assert.deepEqual(DEFAULT_PROFILE.childBirths,birthDates);
 });
-test('empty settings left by the old version no longer hide personal defaults',()=>{
-  const state=resolveProfileState({legacy:{...EMPTY_PROFILE},legacyBaseline:{...EMPTY_PROFILE}});
-  assert.deepEqual(state.profile,DEFAULT_PROFILE);
-  assert.deepEqual(state.baseline,DEFAULT_PROFILE);
+test('stale saved defaults adopt the published corrections and keep other edits',()=>{
+  const old={...EMPTY_PROFILE,marriedAt:'2015-01',childBirths:['2021-02'],householdHead:'yes'};
+  const migrated=resolveProfile({oldBaseline:old,oldProfile:{...old,city:'수원시',childBirths:['2018-01']}});
+  assert.deepEqual(migrated,{...DEFAULT_PROFILE,city:'수원시'});
+  assert.deepEqual(profileOverrides(migrated),{city:'수원시'});
+  assert.deepEqual(resolveProfile({oldProfile:EMPTY_PROFILE}),DEFAULT_PROFILE);
 });
-test('existing personal settings and imported baselines are preserved on migration',()=>{
-  const custom=normalizeProfile({...DEFAULT_PROFILE,city:'수원시',depositAmountManwon:600});
-  const state=resolveProfileState({legacy:custom,legacyBaseline:DEFAULT_PROFILE});
-  assert.equal(state.profile.city,'수원시');
-  assert.equal(state.profile.depositAmountManwon,600);
-  assert.deepEqual(state.baseline,DEFAULT_PROFILE);
-});
-test('settings saved after this update remain authoritative even when cleared',()=>{
-  const state=resolveProfileState({saved:{...EMPTY_PROFILE},savedBaseline:DEFAULT_PROFILE});
-  assert.deepEqual(state.profile,EMPTY_PROFILE);
-  assert.deepEqual(state.baseline,DEFAULT_PROFILE);
-  state.profile.childBirths.push('2020-01');
-  assert.deepEqual(DEFAULT_PROFILE.childBirths,['2025-02']);
+test('explicit edits, including clearing a field, survive reload until reset',()=>{
+  const edited={...DEFAULT_PROFILE,accountSince:'',householdHead:'unknown'};
+  assert.deepEqual(resolveProfile({overrides:profileOverrides(edited)}),edited);
+  assert.deepEqual(resolveProfile({overrides:{},oldProfile:edited}),DEFAULT_PROFILE);
 });
 
 const basic=normalizeProfile({region:'경기',city:'용인시',accountSince:'2010-01-01',ownsHome:'no',depositAmountManwon:350,paymentCount:100,childrenCount:2,childBirths:['2025-03'],marriedAt:'2019-04'});
@@ -120,9 +111,9 @@ test('regulated unknown household and win history remains review with reasons',(
 });
 test('regulated verified first rank and local residency can pass',()=>{
   const item={...apt,regulated:true,speculative:true};
-  const p={...basic,residenceMinMonths:24,residenceVerifiedAt:'2026-01-01',householdHead:'yes',householdHomeless:'yes',wonWithin5Years:'no'};
+  const p={...basic,residenceSince:'2024-11-02',householdHead:'yes',householdHomeless:'yes',wonWithin5Years:'no'};
   assert.equal(assessGeneral(item,p).status,'first_local');
-  assert.equal(p.residenceSince,'');
+  assert.equal(assessGeneral(item,{...p,residenceSince:'2024-11-03'}).status,'review');
 });
 test('uncertain or short local residency is not labelled local first rank',()=>{
   const item={...apt,regulated:true,speculative:true};
@@ -136,15 +127,49 @@ test('public housing keeps extra qualification review visible',()=>{
   assert.ok(a.checks.some(c=>c.label==='납입인정 횟수'&&c.state==='pass'));
   assert.ok(a.notes.some(n=>n.includes('소득·자산')));
 });
-test('special supply uses child count even when only youngest birth month is known',()=>{
-  const e=eventsFor(apt,basic).find(e=>e.kind==='special'), a=assess(e,basic);
-  assert.equal(a.status,'review');
-  assert.ok(a.notes.some(n=>n.includes('자녀 2명')));
-  assert.ok(a.notes.some(n=>n.includes('24개월 미만')));
+const family={...basic,childBirths:['2022-01-17','2025-02-10'],householdHead:'no',householdHomeless:'yes',wonWithin5Years:'no'};
+const special=(changes={})=>({...apt,models:[{type:'084A',area:84,specialSupply:7,specialBreakdown:{multiChild:2,newborn:3,newlywed:2}}],...changes});
+test('regulated private multi-child allocations do not require a household head, newborn first rank does',()=>{
+  const a=assessSpecial(special({regulated:true}),family);
+  assert.deepEqual(a.candidates,['다자녀']);
+  assert.match(a.checks.find(c=>c.label==='신생아').value,/세대주/);
+  assert.equal(assessSpecial(special({region:'부산'}),family).status,'review');
+  assert.equal(assessSpecial(special(),{...family,householdHomeless:'unknown'}).status,'review');
 });
-test('birth month at 24 month boundary requires exact date instead of invention',()=>{
-  const a=assess({kind:'special',date:'2027-03-15',listing:{...apt,announcementDate:'2027-03-15'}},basic);
-  assert.ok(a.notes.some(n=>n.includes('정확한 출생일')));
+test('public-sale newborn includes the second birthday and applies its own savings rules',()=>{
+  const onBirthday=special({announcementDate:'2027-02-10',publicHousingLaw:true,housingType:'국민',regulated:true});
+  const accepted=assessSpecial(onBirthday,family);
+  assert.deepEqual(accepted.candidates,['다자녀','신생아','신혼부부']);
+  assert.ok(!assessSpecial({...onBirthday,announcementDate:'2027-02-11'},family).candidates.includes('신생아'));
+  assert.ok(!assessSpecial(onBirthday,{...family,paymentCount:5}).candidates.length);
+  const unknown=assessSpecial(onBirthday,{...family,childBirths:['2025-02']});
+  assert.equal(unknown.checks.find(c=>c.label==='신생아').state,'review');
+});
+test('an adult child and undisclosed birthdays cannot confirm two minors',()=>{
+  const a=assessSpecial(special(),{...family,childBirths:['2007-11-02','2025-01-01']});
+  assert.ok(!a.candidates.includes('다자녀'));
+  const unknown=assessSpecial(special(),{...family,childBirths:['2025-01']});
+  assert.equal(unknown.checks[0].state,'review');
+});
+test('distinguishes zero from missing quota and checks the deposit for the actual allocated type',()=>{
+  const item=special({models:[
+    {area:84,specialBreakdown:{multiChild:0,newborn:0}},
+    {area:140,specialBreakdown:{multiChild:3,newborn:0}}
+  ]});
+  let a=assessSpecial(item,{...family,marriedAt:'2024-05-01',depositAmountManwon:250});
+  assert.equal(a.status,'review');
+  assert.match(a.checks[0].value,/예치금 미달/);
+  assert.equal(a.checks[1].value,'배정 없음');
+  assert.equal(a.checks[2].state,'review');
+  a=assessSpecial(item,{...family,depositAmountManwon:500});
+  assert.deepEqual(a.candidates,['다자녀']);
+});
+test('a calendar day includes ongoing receipts and orders by the assessed status then name',()=>{
+  const statuses=['review','first_other','second','special','first_local'];
+  const events=statuses.map(status=>({id:status,listing:apt,assessment:{status}}));
+  assert.deepEqual(events.sort(compareCalendarEvents).map(e=>e.id),['special','first_local','first_other','second','review']);
+  assert.equal(onCalendarDay({date:'2026-12-30',end:'2027-01-04'},'2027-01-04'),true);
+  assert.equal(onCalendarDay({date:'2026-12-30'},'2026-12-31'),false);
 });
 test('remaining supply is never automatically labelled first rank',()=>{
   const item={...apt,category:'remaining',dates:{GNRL_RCEPT_BGNDE:'2026-11-20'}};
