@@ -26,7 +26,7 @@ export const DEFAULT_PROFILE = {
   "paymentCount": 121,
   "profileVerifiedAt": "2026-11-04",
   "preferredArea": 84,
-  "householdHead": "no",
+  "householdHead": "yes",
   "householdHomeless": "yes",
   "wonWithin5Years": "no"
 };
