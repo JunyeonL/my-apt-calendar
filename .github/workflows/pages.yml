@@ -81,6 +81,8 @@ jobs:
           mkdir -p dist/data
           cp index.html styles.css app.js eligibility.mjs .nojekyll dist/
           cp data/listings.json dist/data/
+          version=$(TZ=Asia/Seoul date '+v%y%m%d_%H%M%S')
+          sed -i "s/__BUILD_VERSION__/$version/g" dist/index.html dist/app.js
           python - <<'PY'
           import json
           import os
