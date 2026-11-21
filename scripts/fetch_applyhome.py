@@ -22,6 +22,9 @@ DEST = ROOT / 'data' / 'listings.json'
 ENDPOINTS = {
     'apt': ('getAPTLttotPblancDetail', 'getAPTLttotPblancMdl'),
     'remaining': ('getRemndrLttotPblancDetail', 'getRemndrLttotPblancMdl'),
+    'optional': ('getOPTLttotPblancDetail', 'getOPTLttotPblancMdl'),
+    'urban': ('getUrbtyOfctlLttotPblancDetail', 'getUrbtyOfctlLttotPblancMdl'),
+    'publicRent': ('getPblPvtRentLttotPblancDetail', 'getPblPvtRentLttotPblancMdl'),
 }
 PAGE_SIZE = 500
 MAX_PAGES = 200
@@ -149,35 +152,78 @@ def exclusive_area(model):
     return area if area is not None and area > 0 else None
 
 
+RENT_SPECIAL_FIELDS = {'youth': 'SPSPLY_YGMN_HSHLDCO', 'newlywed': 'SPSPLY_NEW_MRRG_HSHLDCO',
+                       'elderly': 'SPSPLY_AGED_HSHLDCO'}
+
+
+def normalize_model(model, category):
+    grouped = category in ('urban', 'publicRent')
+    amount = number(model.get('SUPLY_AMOUNT' if grouped else 'LTTOT_TOP_AMOUNT'))
+    households = number(model.get('SUPLY_HSHLDCO'))
+    if grouped:
+        group = string(model.get('GP'))
+        if group.isdigit():
+            group += '군'
+        model_type = ' · '.join(part for part in (group, string(model.get('TP'))) if part)
+        total = households
+        general = number(model.get('GNSPLY_HSHLDCO'))
+        special = total - general if general is not None and total is not None and total >= general else None
+        fields = RENT_SPECIAL_FIELDS if category == 'publicRent' else {}
+    else:
+        model_type = string(model.get('HOUSE_TY'))
+        general = households
+        special = number(model.get('SPSPLY_HSHLDCO'))
+        total = general + special if general is not None and special is not None else None
+        fields = SPECIAL_SUPPLY_FIELDS
+    return {
+        'type': model_type, 'area': exclusive_area(model),
+        'priceManwon': amount if amount and amount > 0 else None,
+        'supply': general, 'specialSupply': special, 'totalSupply': total,
+        'specialBreakdown': {name: number(model.get(field)) for name, field in fields.items()},
+    }
+
+
+def supply_type(row, category):
+    house = string(row.get('HOUSE_SECD_NM'))
+    detail = string(row.get('HOUSE_DTL_SECD_NM') or row.get('HOUSE_DETAIL_SECD_NM'))
+    if category == 'remaining':
+        return '불법행위재공급' if string(row.get('HOUSE_SECD')).zfill(2) == '06' or '불법' in house else '무순위'
+    if category == 'optional':
+        return '임의공급'
+    if category == 'urban':
+        labels = {'01': '도시형생활주택', '02': '오피스텔', '03': '민간임대', '04': '생활숙박시설'}
+        return detail or labels.get(string(row.get('HOUSE_DTL_SECD')).zfill(2)) or house or '도시형·오피스텔 등'
+    if category == 'publicRent':
+        return '공공지원민간임대'
+    return detail or house or 'APT'
+
+
+def supply_region(row):
+    region = string(row.get('SUBSCRPT_AREA_CODE_NM'))
+    address = string(row.get('HSSPLY_ADRES')).split()
+    value = region or (address[0] if address else '')
+    for short, full in [('서울', '서울특별시'), ('경기', '경기도'), ('인천', '인천광역시')]:
+        if value in (short, full):
+            return short
+    return value
+
+
 def normalize(row, category, models_by_id):
     manage_no = string(row.get('HOUSE_MANAGE_NO'))
     pblanc_no = string(row.get('PBLANC_NO'))
     unique_id = f'{category}-{manage_no}-{pblanc_no}'
     matching = models_by_id.get((manage_no, pblanc_no), [])
-    model_list = []
-    for model in matching:
-        amount = number(model.get('LTTOT_TOP_AMOUNT'))
-        area = exclusive_area(model)
-        general_supply = number(model.get('SUPLY_HSHLDCO'))
-        special_supply = number(model.get('SPSPLY_HSHLDCO'))
-        model_list.append({
-            'type': string(model.get('HOUSE_TY')),
-            'area': area,
-            'priceManwon': amount if amount and amount > 0 else None,
-            'supply': general_supply,
-            'specialSupply': special_supply,
-            'totalSupply': general_supply + special_supply if general_supply is not None and special_supply is not None else None,
-            'specialBreakdown': {name: number(model.get(field)) for name, field in SPECIAL_SUPPLY_FIELDS.items()},
-        })
-    model_list.sort(key=lambda x: x['area'] if x['area'] is not None else 9999)
+    model_list = sorted((normalize_model(m, category) for m in matching),
+                        key=lambda m: (m['area'] is None, m['area'] or 0, m['type']))
     public_law = {'Y': True, 'N': False}.get(string(row.get('PUBLIC_HOUSE_SPCLW_APPLC_AT')).upper())
     return {
         'id': unique_id,
         'name': string(row.get('HOUSE_NM')),
         'category': category,
-        'region': string(row.get('SUBSCRPT_AREA_CODE_NM')),
+        'region': supply_region(row),
         'address': string(row.get('HSSPLY_ADRES')),
-        'housingType': string(row.get('HOUSE_DTL_SECD_NM')),
+        'housingType': string(row.get('HOUSE_DTL_SECD_NM') or row.get('HOUSE_DETAIL_SECD_NM')),
+        'supplyType': supply_type(row, category),
         'houseCategory': string(row.get('HOUSE_SECD_NM')),
         'households': number(row.get('TOT_SUPLY_HSHLDCO')),
         'announcementDate': date(row.get('RCRIT_PBLANC_DE')),
@@ -218,12 +264,13 @@ def main():
             matching = [m for m in models if (string(m.get('HOUSE_MANAGE_NO')), string(m.get('PBLANC_NO'))) == pair]
             items.append(normalize(row, category, {pair: matching}))
     if not saw_detail:
-        raise RuntimeError('Both historical notice endpoints returned no rows. Keeping existing dataset.')
+        raise RuntimeError('All historical notice endpoints returned no rows. Keeping existing dataset.')
     items.sort(key=lambda x: (x['announcementDate'] or '', x['name']))
     payload = {
         'source': '한국부동산원 청약홈 공공데이터 API',
         'updatedAt': dt.datetime.now(dt.timezone.utc).isoformat(timespec='seconds'),
         'window': {'first': first, 'last': last},
+        'feeds': list(ENDPOINTS),
         'items': items,
     }
     DEST.parent.mkdir(parents=True, exist_ok=True)

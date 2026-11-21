@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {normalizeDate,normalizeMonthOrDate,monthsBetween,yearsBetween,eventsFor,assess,assessGeneral,chooseModel,relevantFirstRank,normalizeProfile,encodeProfile,decodeProfileFragment,calendarWeeks,EMPTY_PROFILE,DEFAULT_PROFILE,resolveProfile,profileOverrides,assessSpecial,compareCalendarEvents,onCalendarDay} from '../eligibility.mjs';
+import {planRoutes,supplyType,normalizeDate,normalizeMonthOrDate,monthsBetween,yearsBetween,eventsFor,assess,assessGeneral,chooseModel,relevantFirstRank,normalizeProfile,encodeProfile,decodeProfileFragment,calendarWeeks,EMPTY_PROFILE,DEFAULT_PROFILE,resolveProfile,profileOverrides,assessSpecial,compareCalendarEvents,onCalendarDay} from '../eligibility.mjs';
 
 test('first visit and reset take the editable deployment defaults',()=>{
   assert.deepEqual(resolveProfile(),DEFAULT_PROFILE);
@@ -180,4 +180,27 @@ test('remaining supply is never automatically labelled first rank',()=>{
 test('select model by preferred exclusive area',()=>{
   assert.equal(chooseModel(apt,84).type,'084');
   assert.equal(chooseModel(apt,59).type,'059');
+});
+
+test('each non-APT family shows its official weekday application period without assigning an APT rank',()=>{
+  const dates={SUBSCRPT_RCEPT_BGNDE:'2026-11-20',SUBSCRPT_RCEPT_ENDDE:'2026-11-24'};
+  for(const [category,type] of [['optional','임의공급'],['urban','오피스텔'],['publicRent','공공지원민간임대']]) {
+    const [e]=eventsFor({...apt,category,supplyType:type,dates},basic);
+    assert.equal(e.label,type); assert.equal(assess(e,basic).status,'review');
+    assert.equal(onCalendarDay(e,'2026-11-24'),true);
+  }
+  const n={...apt,category:'remaining',houseCategory:'불법행위 재공급',dates:{...dates,
+    SPSPLY_RCEPT_BGNDE:'2026-11-20',SPSPLY_RCEPT_ENDDE:'2026-11-20',
+    GNRL_RCEPT_BGNDE:'2026-11-23',GNRL_RCEPT_ENDDE:'2026-11-24'}};
+  assert.equal(supplyType(n),'불법행위재공급');
+  assert.deepEqual(eventsFor(n,basic).map(e=>[e.kind,e.date,e.end]),[
+    ['supplySpecial','2026-11-20','2026-11-20'],['supplyGeneral','2026-11-23','2026-11-24']]);
+});
+test('manual decisions precede automatic rank within a day and preserve available planned application dates',()=>{
+  const all=[['second','undecided'],['special','skipped'],['review','planned'],['first_local','undecided']];
+  const es=all.map(([status,decision])=>({id:status,listing:apt,assessment:{status},review:{status:decision}}));
+  assert.deepEqual(es.sort(compareCalendarEvents).map(e=>e.id),['review','first_local','second','special']);
+  const item={...apt,dates:{...apt.dates,GNRL_RNK2_CRSPAREA_RCPTDE:'2026-11-25'}};
+  assert.ok(eventsFor(item,basic,{status:'planned',routes:['second']}).some(e=>e.kind==='general2'&&e.date==='2026-11-25'));
+  assert.deepEqual(planRoutes({category:'optional',dates:{SUBSCRPT_RCEPT_BGNDE:'2026-11-20'}}),['open']);
 });

@@ -231,17 +231,64 @@ export function assessGeneral(listing,p) {
   if(uncertain||failed) return result('review',notes,checks,{rankCandidate:failed?'second':'first'});
   return result(first.regionKind==='local'?'first_local':'first_other',notes,checks);
 }
-export function eventsFor(listing,p) {
+export function supplyType(item) {
+  if(item.supplyType) return item.supplyType;
+  if(item.category==='remaining') return item.houseCategory?.includes('불법')?'불법행위재공급':'무순위';
+  if(item.category==='optional') return '임의공급';
+  if(item.category==='publicRent') return '공공지원민간임대';
+  return item.housingType || item.houseCategory || 'APT';
+}
+export const routeLabels={
+  first:'일반 1순위', second:'일반 2순위', multiChild:'다자녀', newborn:'신생아',
+  newlywed:'신혼부부', firstHome:'생애최초', elderlyParent:'노부모부양', institution:'기관추천',
+  relocatedInstitution:'이전기관', youth:'청년', elderly:'고령자', otherSpecial:'기타 특별공급',
+  regular:'일반공급', open:'청약접수'
+};
+export function planRoutes(item) {
+  const d=item.dates||{}, models=item.models||[], result=[];
+  const hasSpecial=Boolean(d.SPSPLY_RCEPT_BGNDE)||models.some(m=>m.specialSupply>0);
+  if(item.category==='apt') {
+    result.push('first');
+    if(Object.keys(d).some(k=>k.startsWith('GNRL_RNK2_')&&d[k])) result.push('second');
+  }
+  else if(d.GNRL_RCEPT_BGNDE||item.category==='publicRent') result.push('regular');
+  if(hasSpecial) {
+    const keys=['multiChild','newborn','newlywed','firstHome','elderlyParent','institution','relocatedInstitution','youth','elderly'];
+    for(const key of keys) {
+      const figures=models.map(m=>m.specialBreakdown?.[key]).filter(Number.isFinite);
+      if(figures.some(n=>n>0)||(!figures.length&&['multiChild','newborn','newlywed','firstHome'].includes(key))) result.push(key);
+    }
+    result.push('otherSpecial');
+  }
+  if(!result.length || (item.category!=='apt'&&d.SUBSCRPT_RCEPT_BGNDE)) result.push('open');
+  return result;
+}
+export function eventsFor(listing,p,review) {
   const events=[], d=listing.dates||{};
-  if(listing.category==='remaining') {
-    const date=d.SUBSCRPT_RCEPT_BGNDE||d.GNRL_RCEPT_BGNDE||d.RCEPT_BGNDE||d.SPSPLY_RCEPT_BGNDE;
-    if(normalizeDate(date)) events.push({kind:'remaining',label:'무순위',date,end:d.SUBSCRPT_RCEPT_ENDDE||d.GNRL_RCEPT_ENDDE||d.RCEPT_ENDDE,regionLabel:'공고 확인'});
+  if(listing.category!=='apt') {
+    const type=supplyType(listing);
+    const add=(kind,label,start,end)=>{
+      if(normalizeDate(d[start])) events.push({kind,label,date:d[start],end:d[end],regionLabel:'공고 확인'});
+    };
+    add('supplySpecial',type+' 특별공급','SPSPLY_RCEPT_BGNDE','SPSPLY_RCEPT_ENDDE');
+    add('supplyGeneral',type+' 일반공급','GNRL_RCEPT_BGNDE','GNRL_RCEPT_ENDDE');
+    if(!events.length) {
+      add('remaining',type,'SUBSCRPT_RCEPT_BGNDE','SUBSCRPT_RCEPT_ENDDE');
+      if(!events.length) add('remaining',type,'RCEPT_BGNDE','RCEPT_ENDDE');
+    }
   } else {
     if(normalizeDate(d.SPSPLY_RCEPT_BGNDE)) events.push({kind:'special',label:'특별공급',date:d.SPSPLY_RCEPT_BGNDE,end:d.SPSPLY_RCEPT_ENDDE,regionLabel:'전체'});
     const assessment=assessGeneral(listing,p), rank=assessment.status==='second'?2:1;
-    const schedule=relevantRank(listing,p,rank);
-    if(schedule) events.push({kind:rank===2?'general2':'general',label:'일반 '+rank+'순위',...schedule});
-    if(!schedule&&normalizeDate(d.RCEPT_BGNDE)) events.push({kind:'general',label:'청약접수',date:d.RCEPT_BGNDE,end:d.RCEPT_ENDDE,regionLabel:'공고 확인'});
+    const ranks=new Set([rank]);
+    if(review?.status==='planned') {
+      if(review.routes.includes('first')) ranks.add(1);
+      if(review.routes.includes('second')) ranks.add(2);
+    }
+    for(const selected of ranks) {
+      const schedule=relevantRank(listing,p,selected);
+      if(schedule) events.push({kind:selected===2?'general2':'general',label:'일반 '+selected+'순위',...schedule});
+    }
+    if(!events.some(e=>e.kind==='general'||e.kind==='general2')&&normalizeDate(d.RCEPT_BGNDE)) events.push({kind:'general',label:'청약접수',date:d.RCEPT_BGNDE,end:d.RCEPT_ENDDE,regionLabel:'공고 확인'});
   }
   if(!events.length&&normalizeDate(listing.announcementDate)) events.push({kind:'notice',label:'모집공고',date:listing.announcementDate,regionLabel:'공고 확인'});
   return events.map(e=>({...e,id:listing.id+':'+e.kind+':'+e.date,listing}));
@@ -367,7 +414,8 @@ export function assessSpecial(listing,input) {
 const priority=['special','first_local','first_other','second','review'];
 const koreanOrder=new Intl.Collator('ko',{numeric:true});
 export function compareCalendarEvents(a,b) {
-  return priority.indexOf(a.assessment.status)-priority.indexOf(b.assessment.status)
+  const order=e=>e.review?.status==='planned'?0:e.review?.status==='skipped'?2:1;
+  return order(a)-order(b)||priority.indexOf(a.assessment.status)-priority.indexOf(b.assessment.status)
     ||koreanOrder.compare(a.listing.name,b.listing.name)||a.id.localeCompare(b.id);
 }
 export function onCalendarDay(event,date) {
@@ -376,7 +424,11 @@ export function onCalendarDay(event,date) {
 
 export function assess(event,p) {
   if(event.kind==='general'||event.kind==='general2') return assessGeneral(event.listing,p);
-  if(event.kind==='remaining') return result('review',['무순위·잔여세대는 거주지·무주택·재당첨 조건을 공고별로 확인해야 합니다.'],[],{text:'무순위 · 검토 필요',short:'무순위'});
+  if(['remaining','supplyGeneral','supplySpecial'].includes(event.kind)) {
+    const type=supplyType(event.listing);
+    const short=event.kind==='supplySpecial'?type+' 특공':event.kind==='supplyGeneral'?type+' 일반':type;
+    return result('review',[type+'의 신청 자격과 접수 방법은 이 공고의 모집 조건을 확인해 주세요.'],[],{text:type+' · 검토 필요',short});
+  }
   if(event.kind==='notice') return result('review',['접수일이 제공되지 않아 모집공고일에 표시했습니다.'],[],{text:'모집공고 · 검토 필요',short:'공고'});
   return assessSpecial(event.listing,p);
 }
