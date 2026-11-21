@@ -1,6 +1,6 @@
 {
   "source": "한국부동산원 청약홈 공공데이터 API",
-  "updatedAt": "2026-11-21T01:46:38+00:00",
+  "updatedAt": "2026-11-21T01:53:45+00:00",
   "window": {
     "first": "2026-11-01",
     "last": "2026-12-31"
@@ -2603,6 +2603,61 @@
       ]
     },
     {
+      "id": "optional-2026940237-2026940237",
+      "category": "optional",
+      "supplyType": "임의공급",
+      "houseCategory": "임의공급",
+      "housingType": "임의공급",
+      "name": "엘리프 한신더휴 수원 C3블록(2차)",
+      "region": "경기",
+      "address": "경기도 수원시 권선구 금곡동 당수1지구 공공주택지구 내 C3블록",
+      "households": 21,
+      "announcementDate": "2026-10-29",
+      "dates": {
+        "SUBSCRPT_RCEPT_BGNDE": "2026-11-02",
+        "SUBSCRPT_RCEPT_ENDDE": "2026-11-03"
+      },
+      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancDetailView.do?houseManageNo=2026940237&pblancNo=2026940237",
+      "models": [
+        {
+          "type": "84.99㎡ A형",
+          "area": 84.99,
+          "priceManwon": 73200.0,
+          "supply": 1.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "84.99㎡ B형",
+          "area": 84.99,
+          "priceManwon": 73000.0,
+          "supply": 3.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "84.99㎡ C형",
+          "area": 84.99,
+          "priceManwon": 75800.0,
+          "supply": 5.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "84.99㎡ D형",
+          "area": 84.99,
+          "priceManwon": 79500.0,
+          "supply": 12.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        }
+      ]
+    },
+    {
       "id": "apt-2026000535-2026000535",
       "name": "중앙하이츠 구성 플랫폼시티",
       "category": "apt",
@@ -3955,6 +4010,144 @@
       ]
     },
     {
+      "id": "optional-2026940245-2026940245",
+      "category": "optional",
+      "supplyType": "임의공급",
+      "houseCategory": "임의공급",
+      "housingType": "임의공급",
+      "name": "고강휴먼빌",
+      "region": "경기",
+      "address": "경기도 부천시 오정구 고강동 293-2번지 외 7필지",
+      "households": 26,
+      "announcementDate": "2026-11-02",
+      "dates": {
+        "SUBSCRPT_RCEPT_BGNDE": "2026-11-04",
+        "SUBSCRPT_RCEPT_ENDDE": "2026-11-05"
+      },
+      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancDetailView.do?houseManageNo=2026940245&pblancNo=2026940245",
+      "models": [
+        {
+          "type": "46.93㎡",
+          "area": 46.93,
+          "priceManwon": 38548.0,
+          "supply": 17.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "48.91㎡",
+          "area": 48.91,
+          "priceManwon": 40934.0,
+          "supply": 4.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "59.98㎡ C형",
+          "area": 59.98,
+          "priceManwon": 51543.0,
+          "supply": 3.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "78.89㎡",
+          "area": 78.89,
+          "priceManwon": 67600.0,
+          "supply": 2.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        }
+      ]
+    },
+    {
+      "id": "optional-2026940246-2026940246",
+      "category": "optional",
+      "supplyType": "임의공급",
+      "houseCategory": "임의공급",
+      "housingType": "임의공급",
+      "name": "고촌센트럴자이(14차)",
+      "region": "경기",
+      "address": "경기도 김포시 고촌읍 신곡리 김포신곡6지구 도시개발사업구역 A3BL",
+      "households": 10,
+      "announcementDate": "2026-11-02",
+      "dates": {
+        "SUBSCRPT_RCEPT_BGNDE": "2026-11-04",
+        "SUBSCRPT_RCEPT_ENDDE": "2026-11-05"
+      },
+      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancDetailView.do?houseManageNo=2026940246&pblancNo=2026940246",
+      "models": [
+        {
+          "type": "84.91㎡ A형",
+          "area": 84.91,
+          "priceManwon": 75840.0,
+          "supply": 5.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "84.35㎡ B형",
+          "area": 84.35,
+          "priceManwon": 74520.0,
+          "supply": 4.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "105.99㎡",
+          "area": 105.99,
+          "priceManwon": 93780.0,
+          "supply": 1.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        }
+      ]
+    },
+    {
+      "id": "publicRent-2026850054-2026850054",
+      "category": "publicRent",
+      "supplyType": "공공지원 민간임대",
+      "houseCategory": "공공지원 민간임대",
+      "housingType": "공공지원 민간임대",
+      "name": "부경경마공원역 대방 디에트르 더리버(AP1BL)",
+      "region": "부산",
+      "address": "부산광역시 강서구 범방동 2008번지",
+      "households": 79,
+      "announcementDate": "2026-11-02",
+      "dates": {
+        "SUBSCRPT_RCEPT_BGNDE": "2026-11-09",
+        "SUBSCRPT_RCEPT_ENDDE": "2026-11-10"
+      },
+      "url": "https://www.applyhome.co.kr/ai/aia/selectPRMOLttotPblancDetailView.do?houseManageNo=2026850054&pblancNo=2026850054&houseSecd=03",
+      "models": [
+        {
+          "type": "- 59A-1",
+          "area": null,
+          "priceManwon": 19380.0,
+          "supply": 34.0,
+          "specialSupply": 0.0,
+          "totalSupply": 34.0,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "- 59B-1",
+          "area": null,
+          "priceManwon": 19522.0,
+          "supply": 45.0,
+          "specialSupply": 0.0,
+          "totalSupply": 45.0,
+          "specialBreakdown": {}
+        }
+      ]
+    },
+    {
       "id": "remaining-2026910281-2026910281",
       "name": "빌리브센트하이(2차)",
       "category": "remaining",
@@ -4846,6 +5039,80 @@
       ]
     },
     {
+      "id": "optional-2026940242-2026940242",
+      "category": "optional",
+      "supplyType": "임의공급",
+      "houseCategory": "임의공급",
+      "housingType": "임의공급",
+      "name": "도안자이 센텀리체 1단지(2차)",
+      "region": "대전",
+      "address": "대전광역시 유성구 도안 2-8지구 26블록(유성구 용계동 267-3번지 일원)",
+      "households": 4,
+      "announcementDate": "2026-11-05",
+      "dates": {
+        "SUBSCRPT_RCEPT_BGNDE": "2026-11-09",
+        "SUBSCRPT_RCEPT_ENDDE": "2026-11-10"
+      },
+      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancDetailView.do?houseManageNo=2026940242&pblancNo=2026940242",
+      "models": [
+        {
+          "type": "84㎡ A형",
+          "area": 84.0,
+          "priceManwon": 77320.0,
+          "supply": 2.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "84.99㎡ C형",
+          "area": 84.99,
+          "priceManwon": 76920.0,
+          "supply": 1.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "99㎡ A형",
+          "area": 99.0,
+          "priceManwon": 99920.0,
+          "supply": 1.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        }
+      ]
+    },
+    {
+      "id": "optional-2026940243-2026940243",
+      "category": "optional",
+      "supplyType": "임의공급",
+      "houseCategory": "임의공급",
+      "housingType": "임의공급",
+      "name": "도안자이 센텀리체 2단지(2차)",
+      "region": "대전",
+      "address": "대전광역시 유성구 도안 2-6지구 30블록(유성구 용계동 299-7번지 일원)",
+      "households": 3,
+      "announcementDate": "2026-11-05",
+      "dates": {
+        "SUBSCRPT_RCEPT_BGNDE": "2026-11-09",
+        "SUBSCRPT_RCEPT_ENDDE": "2026-11-10"
+      },
+      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancDetailView.do?houseManageNo=2026940243&pblancNo=2026940243",
+      "models": [
+        {
+          "type": "84㎡ A형",
+          "area": 84.0,
+          "priceManwon": 77490.0,
+          "supply": 3.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        }
+      ]
+    },
+    {
       "id": "remaining-2026910279-2026910279",
       "name": "봉담자이 프라이드시티",
       "category": "remaining",
@@ -4924,6 +5191,85 @@
             "youth": null,
             "other": null
           }
+        }
+      ]
+    },
+    {
+      "id": "publicRent-2026850055-2026850055",
+      "category": "publicRent",
+      "supplyType": "공공지원 민간임대",
+      "houseCategory": "공공지원 민간임대",
+      "housingType": "공공지원 민간임대",
+      "name": "힐스테이트 회룡역파크뷰",
+      "region": "경기",
+      "address": "경기도 의정부시 신흥로 43",
+      "households": 909,
+      "announcementDate": "2026-11-05",
+      "dates": {
+        "SUBSCRPT_RCEPT_BGNDE": "2026-11-10",
+        "SUBSCRPT_RCEPT_ENDDE": "2026-11-10"
+      },
+      "url": "https://www.applyhome.co.kr/ai/aia/selectPRMOLttotPblancDetailView.do?houseManageNo=2026850055&pblancNo=2026850055&houseSecd=03",
+      "models": [
+        {
+          "type": "- 49",
+          "area": null,
+          "priceManwon": 29282.0,
+          "supply": 0.0,
+          "specialSupply": 115.0,
+          "totalSupply": 115.0,
+          "specialBreakdown": {
+            "youth": 45.0
+          }
+        },
+        {
+          "type": "- 59A",
+          "area": null,
+          "priceManwon": 42417.0,
+          "supply": 181.0,
+          "specialSupply": 0.0,
+          "totalSupply": 181.0,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "- 59B",
+          "area": null,
+          "priceManwon": 37272.0,
+          "supply": 0.0,
+          "specialSupply": 37.0,
+          "totalSupply": 37.0,
+          "specialBreakdown": {
+            "youth": 14.0
+          }
+        },
+        {
+          "type": "- 59C",
+          "area": null,
+          "priceManwon": 36337.0,
+          "supply": 0.0,
+          "specialSupply": 30.0,
+          "totalSupply": 30.0,
+          "specialBreakdown": {
+            "youth": 12.0
+          }
+        },
+        {
+          "type": "- 84A",
+          "area": null,
+          "priceManwon": 57427.0,
+          "supply": 250.0,
+          "specialSupply": 0.0,
+          "totalSupply": 250.0,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "- 84B",
+          "area": null,
+          "priceManwon": 56430.0,
+          "supply": 296.0,
+          "specialSupply": 0.0,
+          "totalSupply": 296.0,
+          "specialBreakdown": {}
         }
       ]
     },
@@ -5808,6 +6154,107 @@
       ]
     },
     {
+      "id": "optional-2026940244-2026940244",
+      "category": "optional",
+      "supplyType": "임의공급",
+      "houseCategory": "임의공급",
+      "housingType": "임의공급",
+      "name": "해링턴플레이스 오룡역 (2차)",
+      "region": "대전",
+      "address": "대전광역시 중구 용두동 722번지 일원",
+      "households": 20,
+      "announcementDate": "2026-11-06",
+      "dates": {
+        "SUBSCRPT_RCEPT_BGNDE": "2026-11-10",
+        "SUBSCRPT_RCEPT_ENDDE": "2026-11-10"
+      },
+      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancDetailView.do?houseManageNo=2026940244&pblancNo=2026940244",
+      "models": [
+        {
+          "type": "84.99㎡ A형",
+          "area": 84.99,
+          "priceManwon": 68130.0,
+          "supply": 7.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "84.9㎡ B형",
+          "area": 84.9,
+          "priceManwon": 66441.0,
+          "supply": 7.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "84.95㎡ C형",
+          "area": 84.95,
+          "priceManwon": 66767.0,
+          "supply": 4.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "84.93㎡ D형",
+          "area": 84.93,
+          "priceManwon": 63880.0,
+          "supply": 2.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        }
+      ]
+    },
+    {
+      "id": "optional-2026940252-2026940252",
+      "category": "optional",
+      "supplyType": "임의공급",
+      "houseCategory": "임의공급",
+      "housingType": "임의공급",
+      "name": "신월동 한양립스(3차)",
+      "region": "서울",
+      "address": "서울특별시 양천구 신월동 118-14외 2필지 일대",
+      "households": 5,
+      "announcementDate": "2026-11-09",
+      "dates": {
+        "SUBSCRPT_RCEPT_BGNDE": "2026-11-11",
+        "SUBSCRPT_RCEPT_ENDDE": "2026-11-12"
+      },
+      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancDetailView.do?houseManageNo=2026940252&pblancNo=2026940252",
+      "models": [
+        {
+          "type": "45.83㎡",
+          "area": 45.83,
+          "priceManwon": 45480.0,
+          "supply": 2.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "53.81㎡ A형",
+          "area": 53.81,
+          "priceManwon": 52500.0,
+          "supply": 1.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "53.72㎡ B형",
+          "area": 53.72,
+          "priceManwon": 51800.0,
+          "supply": 2.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        }
+      ]
+    },
+    {
       "id": "remaining-2026910290-2026910290",
       "name": "청계 노르웨이숲(14차)",
       "category": "remaining",
@@ -5867,6 +6314,71 @@
             "youth": null,
             "other": null
           }
+        }
+      ]
+    },
+    {
+      "id": "optional-2026940247-2026940247",
+      "category": "optional",
+      "supplyType": "임의공급",
+      "houseCategory": "임의공급",
+      "housingType": "임의공급",
+      "name": "수원이목지구 대방 디에트르 더 리체I(A4BL)",
+      "region": "경기",
+      "address": "경기도 수원시 장안구 이목동 종전부동산 이목지구 도시개발사업 A4블록 공동주택용지",
+      "households": 2,
+      "announcementDate": "2026-11-10",
+      "dates": {
+        "SUBSCRPT_RCEPT_BGNDE": "2026-11-12",
+        "SUBSCRPT_RCEPT_ENDDE": "2026-11-13"
+      },
+      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancDetailView.do?houseManageNo=2026940247&pblancNo=2026940247",
+      "models": [
+        {
+          "type": "84.98㎡ C형",
+          "area": 84.98,
+          "priceManwon": 102866.0,
+          "supply": 2.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        }
+      ]
+    },
+    {
+      "id": "optional-2026940254-2026940254",
+      "category": "optional",
+      "supplyType": "임의공급",
+      "houseCategory": "임의공급",
+      "housingType": "임의공급",
+      "name": "의정부역 센트럴 아이파크(6차)",
+      "region": "경기",
+      "address": "경기도 의정부시 의정부동 253-19번지 일원",
+      "households": 6,
+      "announcementDate": "2026-11-10",
+      "dates": {
+        "SUBSCRPT_RCEPT_BGNDE": "2026-11-13",
+        "SUBSCRPT_RCEPT_ENDDE": "2026-11-13"
+      },
+      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancDetailView.do?houseManageNo=2026940254&pblancNo=2026940254",
+      "models": [
+        {
+          "type": "84.84㎡ A형",
+          "area": 84.84,
+          "priceManwon": 81400.0,
+          "supply": 2.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "84.72㎡ B형",
+          "area": 84.72,
+          "priceManwon": 79600.0,
+          "supply": 4.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
         }
       ]
     },
@@ -6006,6 +6518,108 @@
             "youth": null,
             "other": null
           }
+        }
+      ]
+    },
+    {
+      "id": "optional-2026940251-2026940251",
+      "category": "optional",
+      "supplyType": "임의공급",
+      "houseCategory": "임의공급",
+      "housingType": "임의공급",
+      "name": "해링턴플레이스 노원 센트럴(4차)",
+      "region": "서울",
+      "address": "서울특별시 노원구 노원로 495(상계동 690)",
+      "households": 8,
+      "announcementDate": "2026-11-10",
+      "dates": {
+        "SUBSCRPT_RCEPT_BGNDE": "2026-11-12",
+        "SUBSCRPT_RCEPT_ENDDE": "2026-11-13"
+      },
+      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancDetailView.do?houseManageNo=2026940251&pblancNo=2026940251",
+      "models": [
+        {
+          "type": "59.74㎡ B형",
+          "area": 59.74,
+          "priceManwon": 85500.0,
+          "supply": 8.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        }
+      ]
+    },
+    {
+      "id": "optional-2026940250-2026940250",
+      "category": "optional",
+      "supplyType": "임의공급",
+      "houseCategory": "임의공급",
+      "housingType": "임의공급",
+      "name": "고덕신도시 아테라 A-63블록 공공분양주택(3차)",
+      "region": "경기",
+      "address": "경기도 평택시 고덕동, 고덕면 일원(평택고덕국제화계획지구 내 A-63BL)",
+      "households": 31,
+      "announcementDate": "2026-11-11",
+      "dates": {
+        "SUBSCRPT_RCEPT_BGNDE": "2026-11-13",
+        "SUBSCRPT_RCEPT_ENDDE": "2026-11-17"
+      },
+      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancDetailView.do?houseManageNo=2026940250&pblancNo=2026940250",
+      "models": [
+        {
+          "type": "74.59㎡ A형",
+          "area": 74.59,
+          "priceManwon": 47552.0,
+          "supply": 11.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "74.72㎡ B형",
+          "area": 74.72,
+          "priceManwon": 47635.0,
+          "supply": 10.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "84.56㎡ A형",
+          "area": 84.56,
+          "priceManwon": 53908.0,
+          "supply": 10.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        }
+      ]
+    },
+    {
+      "id": "optional-2026940253-2026940253",
+      "category": "optional",
+      "supplyType": "임의공급",
+      "houseCategory": "임의공급",
+      "housingType": "임의공급",
+      "name": "송도자이 더 스타",
+      "region": "인천",
+      "address": "인천광역시 연수구 송도동 396-11 (A17블록)",
+      "households": 1,
+      "announcementDate": "2026-11-11",
+      "dates": {
+        "SUBSCRPT_RCEPT_BGNDE": "2026-11-13",
+        "SUBSCRPT_RCEPT_ENDDE": "2026-11-13"
+      },
+      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancDetailView.do?houseManageNo=2026940253&pblancNo=2026940253",
+      "models": [
+        {
+          "type": "99.77㎡ A형",
+          "area": 99.77,
+          "priceManwon": 105820.0,
+          "supply": 1.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
         }
       ]
     },
@@ -6989,6 +7603,43 @@
       ]
     },
     {
+      "id": "optional-2026940249-2026940249",
+      "category": "optional",
+      "supplyType": "임의공급",
+      "houseCategory": "임의공급",
+      "housingType": "임의공급",
+      "name": "야목역 서희스타힐스 그랜드힐(조합원 취소분)(2차)",
+      "region": "경기",
+      "address": "경기도 화성특례시 효행구 비봉면 구포리 614-18번지 일원",
+      "households": 13,
+      "announcementDate": "2026-11-13",
+      "dates": {
+        "SUBSCRPT_RCEPT_BGNDE": "2026-11-17",
+        "SUBSCRPT_RCEPT_ENDDE": "2026-11-23"
+      },
+      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancDetailView.do?houseManageNo=2026940249&pblancNo=2026940249",
+      "models": [
+        {
+          "type": "84.95㎡ A형",
+          "area": 84.95,
+          "priceManwon": 57600.0,
+          "supply": 7.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "84.96㎡ B형",
+          "area": 84.96,
+          "priceManwon": 56600.0,
+          "supply": 6.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        }
+      ]
+    },
+    {
       "id": "apt-2026000540-2026000540",
       "name": "엘리프 논산 디에디션",
       "category": "apt",
@@ -7589,6 +8240,89 @@
       ]
     },
     {
+      "id": "optional-2026940256-2026940256",
+      "category": "optional",
+      "supplyType": "임의공급",
+      "houseCategory": "임의공급",
+      "housingType": "임의공급",
+      "name": "디에이치 신반포에스테라",
+      "region": "서울",
+      "address": "서울특별시 서초구 잠원동 65-33번지 일대",
+      "households": 5,
+      "announcementDate": "2026-11-16",
+      "dates": {
+        "SUBSCRPT_RCEPT_BGNDE": "2026-11-18",
+        "SUBSCRPT_RCEPT_ENDDE": "2026-11-19"
+      },
+      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancDetailView.do?houseManageNo=2026940256&pblancNo=2026940256",
+      "models": [
+        {
+          "type": "85㎡",
+          "area": 85.0,
+          "priceManwon": 439800.0,
+          "supply": 5.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        }
+      ]
+    },
+    {
+      "id": "optional-2026940262-2026940262",
+      "category": "optional",
+      "supplyType": "임의공급",
+      "houseCategory": "임의공급",
+      "housingType": "임의공급",
+      "name": "리아츠 더 인천(24차)",
+      "region": "인천",
+      "address": "인천광역시 제물포구 송림동 31-3번지 일원",
+      "households": 7,
+      "announcementDate": "2026-11-16",
+      "dates": {
+        "SUBSCRPT_RCEPT_BGNDE": "2026-11-18",
+        "SUBSCRPT_RCEPT_ENDDE": "2026-11-20"
+      },
+      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancDetailView.do?houseManageNo=2026940262&pblancNo=2026940262",
+      "models": [
+        {
+          "type": "59.99㎡ B형",
+          "area": 59.99,
+          "priceManwon": 36800.0,
+          "supply": 2.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "59.97㎡ C형",
+          "area": 59.97,
+          "priceManwon": 38500.0,
+          "supply": 1.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "75㎡",
+          "area": 75.0,
+          "priceManwon": 48400.0,
+          "supply": 2.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "84.97㎡ B형",
+          "area": 84.97,
+          "priceManwon": 54500.0,
+          "supply": 2.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        }
+      ]
+    },
+    {
       "id": "remaining-2026910296-2026910296",
       "name": "힐스테이트 거제시그니처(1회차)",
       "category": "remaining",
@@ -7723,6 +8457,104 @@
             "relocatedInstitution": null,
             "youth": null,
             "other": null
+          }
+        }
+      ]
+    },
+    {
+      "id": "optional-2026940260-2026940260",
+      "category": "optional",
+      "supplyType": "임의공급",
+      "houseCategory": "임의공급",
+      "housingType": "임의공급",
+      "name": "더샵 분당센트로(7차)",
+      "region": "경기",
+      "address": "경기도 성남시 분당구 미금로 66",
+      "households": 6,
+      "announcementDate": "2026-11-17",
+      "dates": {
+        "SUBSCRPT_RCEPT_BGNDE": "2026-11-20",
+        "SUBSCRPT_RCEPT_ENDDE": "2026-11-24"
+      },
+      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancDetailView.do?houseManageNo=2026940260&pblancNo=2026940260",
+      "models": [
+        {
+          "type": "78.44㎡ N형",
+          "area": 78.44,
+          "priceManwon": 196300.0,
+          "supply": 5.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "84.08㎡ N형",
+          "area": 84.08,
+          "priceManwon": 205900.0,
+          "supply": 1.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        }
+      ]
+    },
+    {
+      "id": "publicRent-2026850056-2026850056",
+      "category": "publicRent",
+      "supplyType": "공공지원 민간임대",
+      "houseCategory": "공공지원 민간임대",
+      "housingType": "공공지원 민간임대",
+      "name": "서면 지원 더뷰 드림아파트(공공지원민간임대)",
+      "region": "부산",
+      "address": "부산광역시 부산진구 부전동 390-1",
+      "households": 145,
+      "announcementDate": "2026-11-17",
+      "dates": {
+        "SUBSCRPT_RCEPT_BGNDE": "2026-11-24",
+        "SUBSCRPT_RCEPT_ENDDE": "2026-11-25"
+      },
+      "url": "https://www.applyhome.co.kr/ai/aia/selectPRMOLttotPblancDetailView.do?houseManageNo=2026850056&pblancNo=2026850056&houseSecd=03",
+      "models": [
+        {
+          "type": "- 23A",
+          "area": null,
+          "priceManwon": 11060.0,
+          "supply": 4.0,
+          "specialSupply": 0.0,
+          "totalSupply": 4.0,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "- 49B",
+          "area": null,
+          "priceManwon": 21120.0,
+          "supply": 82.0,
+          "specialSupply": 19.0,
+          "totalSupply": 101.0,
+          "specialBreakdown": {
+            "newlywed": 19.0
+          }
+        },
+        {
+          "type": "- 59C",
+          "area": null,
+          "priceManwon": 25280.0,
+          "supply": 3.0,
+          "specialSupply": 1.0,
+          "totalSupply": 4.0,
+          "specialBreakdown": {
+            "newlywed": 1.0
+          }
+        },
+        {
+          "type": "- 59D",
+          "area": null,
+          "priceManwon": 25280.0,
+          "supply": 33.0,
+          "specialSupply": 3.0,
+          "totalSupply": 36.0,
+          "specialBreakdown": {
+            "newlywed": 3.0
           }
         }
       ]
@@ -7907,6 +8739,52 @@
             "youth": null,
             "other": null
           }
+        }
+      ]
+    },
+    {
+      "id": "optional-2026940255-2026940255",
+      "category": "optional",
+      "supplyType": "임의공급",
+      "houseCategory": "임의공급",
+      "housingType": "임의공급",
+      "name": "광명 시티프라디움 에듀하임",
+      "region": "경기",
+      "address": "경기도 광명시 소하동 광명 구름산지구 도시개발사업지구 A6BL",
+      "households": 30,
+      "announcementDate": "2026-11-18",
+      "dates": {
+        "SUBSCRPT_RCEPT_BGNDE": "2026-11-23",
+        "SUBSCRPT_RCEPT_ENDDE": "2026-11-23"
+      },
+      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancDetailView.do?houseManageNo=2026940255&pblancNo=2026940255",
+      "models": [
+        {
+          "type": "84.85㎡ A형",
+          "area": 84.85,
+          "priceManwon": 117500.0,
+          "supply": 6.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "84.96㎡ C형",
+          "area": 84.96,
+          "priceManwon": 118000.0,
+          "supply": 13.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "84.91㎡ E형",
+          "area": 84.91,
+          "priceManwon": 118000.0,
+          "supply": 11.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
         }
       ]
     },
@@ -8349,6 +9227,117 @@
             "youth": null,
             "other": null
           }
+        }
+      ]
+    },
+    {
+      "id": "optional-2026940263-2026940263",
+      "category": "optional",
+      "supplyType": "임의공급",
+      "houseCategory": "임의공급",
+      "housingType": "임의공급",
+      "name": "이천역 예미지 센트럴파크(4차)",
+      "region": "경기",
+      "address": "경기도 이천시 중리지구 B3블록(중리동 518번지)",
+      "households": 15,
+      "announcementDate": "2026-11-18",
+      "dates": {
+        "SUBSCRPT_RCEPT_BGNDE": "2026-11-20",
+        "SUBSCRPT_RCEPT_ENDDE": "2026-11-20"
+      },
+      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancDetailView.do?houseManageNo=2026940263&pblancNo=2026940263",
+      "models": [
+        {
+          "type": "84.79㎡ A형",
+          "area": 84.79,
+          "priceManwon": 54700.0,
+          "supply": 15.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        }
+      ]
+    },
+    {
+      "id": "optional-2026940261-2026940261",
+      "category": "optional",
+      "supplyType": "임의공급",
+      "houseCategory": "임의공급",
+      "housingType": "임의공급",
+      "name": "e편한세상 헤이리",
+      "region": "경기",
+      "address": "경기도 파주시 탄현면 헤이리로 372",
+      "households": 15,
+      "announcementDate": "2026-11-19",
+      "dates": {
+        "SUBSCRPT_RCEPT_BGNDE": "2026-11-23",
+        "SUBSCRPT_RCEPT_ENDDE": "2026-11-23"
+      },
+      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancDetailView.do?houseManageNo=2026940261&pblancNo=2026940261",
+      "models": [
+        {
+          "type": "84.98㎡ A형",
+          "area": 84.98,
+          "priceManwon": 43600.0,
+          "supply": 3.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "84.96㎡ B형",
+          "area": 84.96,
+          "priceManwon": 43100.0,
+          "supply": 12.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        }
+      ]
+    },
+    {
+      "id": "optional-2026940257-2026940257",
+      "category": "optional",
+      "supplyType": "임의공급",
+      "houseCategory": "임의공급",
+      "housingType": "임의공급",
+      "name": "강동한강 디에트르",
+      "region": "서울",
+      "address": "서울특별시 강동구 암사동 447-8번지",
+      "households": 13,
+      "announcementDate": "2026-11-19",
+      "dates": {
+        "SUBSCRPT_RCEPT_BGNDE": "2026-11-24",
+        "SUBSCRPT_RCEPT_ENDDE": "2026-11-25"
+      },
+      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancDetailView.do?houseManageNo=2026940257&pblancNo=2026940257",
+      "models": [
+        {
+          "type": "59.59㎡ B형",
+          "area": 59.59,
+          "priceManwon": 113500.0,
+          "supply": 10.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "79.75㎡ A형",
+          "area": 79.75,
+          "priceManwon": 141500.0,
+          "supply": 2.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "80.15㎡ A형",
+          "area": 80.15,
+          "priceManwon": 139500.0,
+          "supply": 1.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
         }
       ]
     },
@@ -9921,6 +10910,171 @@
       ]
     },
     {
+      "id": "optional-2026940264-2026940264",
+      "category": "optional",
+      "supplyType": "임의공급",
+      "houseCategory": "임의공급",
+      "housingType": "임의공급",
+      "name": "용인 고림 동문 디 이스트",
+      "region": "경기",
+      "address": "경기도 용인시 처인구 고림동 620번지 일원",
+      "households": 23,
+      "announcementDate": "2026-11-20",
+      "dates": {
+        "SUBSCRPT_RCEPT_BGNDE": "2026-11-24",
+        "SUBSCRPT_RCEPT_ENDDE": "2026-11-24"
+      },
+      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancDetailView.do?houseManageNo=2026940264&pblancNo=2026940264",
+      "models": [
+        {
+          "type": "75.78㎡ A형",
+          "area": 75.78,
+          "priceManwon": 67770.0,
+          "supply": 9.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "75.72㎡ B형",
+          "area": 75.72,
+          "priceManwon": 66930.0,
+          "supply": 4.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "84.79㎡ A형",
+          "area": 84.79,
+          "priceManwon": 71570.0,
+          "supply": 6.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "84.77㎡ B형",
+          "area": 84.77,
+          "priceManwon": 70570.0,
+          "supply": 4.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        }
+      ]
+    },
+    {
+      "id": "optional-2026940259-2026940259",
+      "category": "optional",
+      "supplyType": "임의공급",
+      "houseCategory": "임의공급",
+      "housingType": "임의공급",
+      "name": "음성자이 센트럴시티",
+      "region": "충북",
+      "address": "충청북도 음성군 금왕읍 무극로 243-15 (음성자이센트럴시티)",
+      "households": 30,
+      "announcementDate": "2026-11-20",
+      "dates": {
+        "SUBSCRPT_RCEPT_BGNDE": "2026-11-24",
+        "SUBSCRPT_RCEPT_ENDDE": "2026-11-25"
+      },
+      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancDetailView.do?houseManageNo=2026940259&pblancNo=2026940259",
+      "models": [
+        {
+          "type": "84.98㎡ A형",
+          "area": 84.98,
+          "priceManwon": 39500.0,
+          "supply": 9.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "84.98㎡ B형",
+          "area": 84.98,
+          "priceManwon": 38700.0,
+          "supply": 15.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "85㎡ C형",
+          "area": 85.0,
+          "priceManwon": 37900.0,
+          "supply": 1.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "101.97㎡ A형",
+          "area": 101.97,
+          "priceManwon": 46700.0,
+          "supply": 4.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "101.97㎡ B형",
+          "area": 101.97,
+          "priceManwon": 48200.0,
+          "supply": 1.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        }
+      ]
+    },
+    {
+      "id": "optional-2026940258-2026940258",
+      "category": "optional",
+      "supplyType": "임의공급",
+      "houseCategory": "임의공급",
+      "housingType": "임의공급",
+      "name": "중앙하이츠 원종역(4차)",
+      "region": "경기",
+      "address": "경기도 부천시 오정구 원종동 276-2",
+      "households": 10,
+      "announcementDate": "2026-11-20",
+      "dates": {
+        "SUBSCRPT_RCEPT_BGNDE": "2026-11-24",
+        "SUBSCRPT_RCEPT_ENDDE": "2026-11-26"
+      },
+      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTRemndrLttotPblancDetailView.do?houseManageNo=2026940258&pblancNo=2026940258",
+      "models": [
+        {
+          "type": "60.27㎡ E형",
+          "area": 60.27,
+          "priceManwon": 46200.0,
+          "supply": 2.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "63.79㎡ H형",
+          "area": 63.79,
+          "priceManwon": 51340.0,
+          "supply": 5.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        },
+        {
+          "type": "68.18㎡ F형",
+          "area": 68.18,
+          "priceManwon": 52700.0,
+          "supply": 3.0,
+          "specialSupply": null,
+          "totalSupply": null,
+          "specialBreakdown": {}
+        }
+      ]
+    },
+    {
       "id": "urban-2026950089-2026950089",
       "name": "청라 아크원 푸르지오",
       "category": "urban",
@@ -10243,5 +11397,11 @@
         }
       ]
     }
-  ]
+  ],
+  "sourceInfo": {
+    "aptAt": "2026-11-21T01:53:45+00:00",
+    "mirrorAsOf": "2026-11-21",
+    "mirror": "FOX부동산 청약 보드",
+    "mirrorAdded": 26
+  }
 }
