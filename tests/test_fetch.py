@@ -29,9 +29,9 @@ class FetchTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             dest = pathlib.Path(folder) / 'listings.json'
             dest.write_bytes(b'old data')
-            with mock.patch.object(mod, 'DEST', dest), mock.patch.dict(os.environ, {'DATA_GO_KR_API_KEY':'dummy'}), mock.patch.object(mod, 'fetch_all', side_effect=[[old], []]) as fetch:
+            with mock.patch.object(mod, 'DEST', dest), mock.patch.dict(os.environ, {'DATA_GO_KR_API_KEY':'dummy'}), mock.patch.object(mod, 'fetch_all', side_effect=[[old]] + [[]] * (len(mod.ENDPOINTS) - 1)) as fetch:
                 self.assertEqual(mod.main(), 0)
-            self.assertEqual(fetch.call_count, 2)
+            self.assertEqual(fetch.call_count, len(mod.ENDPOINTS))
             self.assertEqual(json.loads(dest.read_text())['items'], [])
 
     def test_supply_breakdown_and_second_rank_dates(self):
@@ -107,7 +107,7 @@ class FetchTests(unittest.TestCase):
         row = {'HOUSE_MANAGE_NO': 42, 'PBLANC_NO': 49, 'HOUSE_NM': '테스트 공고', 'RCRIT_PBLANC_DE': today, 'serviceKey': 'private'}
         with tempfile.TemporaryDirectory() as folder:
             dest = pathlib.Path(folder) / 'data' / 'listings.json'
-            with mock.patch.object(mod, 'DEST', dest), mock.patch.dict(os.environ, {'DATA_GO_KR_API_KEY': 'dummy%2Bkey%3D'}), mock.patch.object(mod, 'fetch_all', side_effect=[[row], [], [], []]) as fetch:
+            with mock.patch.object(mod, 'DEST', dest), mock.patch.dict(os.environ, {'DATA_GO_KR_API_KEY': 'dummy%2Bkey%3D'}), mock.patch.object(mod, 'fetch_all', side_effect=[[row]] + [[]] * len(mod.ENDPOINTS)) as fetch:
                 self.assertEqual(mod.main(), 0)
             self.assertEqual(fetch.call_args_list[0].args[1], 'dummy+key=')
             self.assertIn('cond[RCRIT_PBLANC_DE::LTE]', fetch.call_args_list[0].args[2])
@@ -117,6 +117,17 @@ class FetchTests(unittest.TestCase):
             self.assertNotIn('serviceKey', dest.read_text())
             self.assertNotIn('dummy', dest.read_text())
             self.assertFalse(dest.with_suffix('.json.tmp').exists())
+
+    def test_supply_families_and_model_semantics(self):
+        self.assertEqual(len(mod.ENDPOINTS), 5)
+        self.assertEqual(mod.supply_type({'HOUSE_SECD':'06'}, 'remaining'), '불법행위재공급')
+        self.assertEqual(mod.supply_type({}, 'optional'), '임의공급')
+        self.assertEqual(mod.supply_type({'HOUSE_DTL_SECD':'02'}, 'urban'), '오피스텔')
+        m = mod.normalize_model({'GP':'5','TP':'84B','EXCLUSE_AR':'84.3','SUPLY_AMOUNT':'95,000',
+                                 'SUBSCRPT_REQST_AMOUNT':'300','SUPLY_HSHLDCO':'10'}, 'urban')
+        self.assertEqual((m['type'], m['priceManwon'], m['totalSupply'], m['supply']), ('5군 · 84B', 95000, 10, None))
+        m = mod.normalize_model({'SUPLY_HSHLDCO':10,'GNSPLY_HSHLDCO':6,'SPSPLY_AGED_HSHLDCO':1}, 'publicRent')
+        self.assertEqual((m['supply'], m['specialSupply'], m['specialBreakdown']['elderly']), (6, 4, 1))
 
     def test_date(self):
         self.assertEqual(mod.date('20261119'),'2026-11-19')
