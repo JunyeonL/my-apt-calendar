@@ -239,7 +239,7 @@ def normalize(row, category, models_by_id):
     }
 
 
-def main():
+def main(supplement=None):
     # Accept both the Decoding and Encoding forms provided by data.go.kr.
     key = urllib.parse.unquote(os.getenv('DATA_GO_KR_API_KEY', '').strip())
     if not key:
@@ -273,13 +273,17 @@ def main():
         'feeds': list(ENDPOINTS),
         'items': items,
     }
+    if supplement is not None:
+        supplement(payload)
     DEST.parent.mkdir(parents=True, exist_ok=True)
     tmp = DEST.with_suffix('.json.tmp')
     tmp.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     tmp.replace(DEST)
-    print(f'Wrote {len(items)} announcements to {DEST}')
+    print(f"Wrote {len(payload['items'])} announcements to {DEST}")
     return 0
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    from applyhome_supplement import add_missing_notices
+
+    sys.exit(main(supplement=add_missing_notices))
