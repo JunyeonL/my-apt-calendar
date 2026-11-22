@@ -18,8 +18,8 @@
   <main class="main">
     <div class="headline"><div><div class="eyebrow">PERSONAL SUBSCRIPTION DASHBOARD</div><h1>내게 맞는 청약만, 한눈에.</h1><p id="profile-summary">내 청약 조건을 불러오는 중입니다.</p></div><div class="today-block"><small>TODAY</small><strong id="today-label">-</strong></div></div>
     <section id="data-warning" class="data-warning" hidden role="status"></section>
-    <div class="review-bar" id="review-bar"><a class="button review-link" id="private-calendar" href="https://junyeon-apt-review.royalolive14.chatgpt.site/">내 검토 달력 열기</a><span id="review-sync" role="status">로그인하면 신청 계획과 메모를 기기 간에 공유합니다.</span><button hidden type="button" id="reload-reviews" class="button button-small">다시 불러오기</button></div>
-    <div id="review-counts" class="review-counts" hidden><span>선택한 달</span><strong>청약 예정 <span id="count-planned">0</span></strong><span>청약 안 할 예정 <b id="count-skipped">0</b></span><span>미검토 <b id="count-undecided">0</b></span><button type="button" class="button button-small" id="review-history">내 검토 기록</button></div>
+    <div class="review-bar" id="review-bar"><span id="review-sync" role="status">공유 검토 기록을 불러오는 중입니다…</span><button hidden type="button" id="reload-reviews" class="button button-small">다시 불러오기</button></div>
+    <div id="review-counts" class="review-counts" hidden><span>선택한 달</span><strong>청약 예정 <span id="count-planned">0</span></strong><span>청약 안 할 예정 <b id="count-skipped">0</b></span><span>미검토 <b id="count-undecided">0</b></span><button type="button" class="button button-small" id="review-history">공유 검토 기록</button></div>
     <div class="summary-heading"><h2>선택한 달 <span id="metric-month">—</span>개 단지</h2><p id="metric-help">특공·일반 접수가 모두 있으면 각 항목에 집계합니다.</p></div>
     <section class="metrics" aria-label="특별공급과 일반공급 요약">
       <div class="metric metric-special"><span>특공 후보</span><strong id="metric-special">—</strong><small>모집 물량·기본조건 충족</small></div>
@@ -33,7 +33,7 @@
         <div class="month-nav"><button type="button" id="previous" class="icon-button" aria-label="이전 달">‹</button><h2 id="month-name">—</h2><button type="button" id="next" class="icon-button" aria-label="다음 달">›</button><button type="button" id="this-month" class="button button-small">이번 달</button></div>
         <div class="right-filters">
           <label class="sr-only" for="region-filter">지역</label><select id="region-filter"><option value="capital">수도권 전체</option><option value="서울">서울</option><option value="경기">경기</option><option value="인천">인천</option><option value="all">전국</option></select>
-          <label class="sr-only" for="status-filter">청약 가능 분류</label><select id="status-filter"><option value="all">전체 일정</option><optgroup id="review-filters" label="내 검토 상태" disabled hidden><option value="planned">청약 예정</option><option value="skipped">청약 안 할 예정</option><option value="undecided">미검토</option></optgroup><option value="special">특공 후보</option><option value="first_local">1순위 해당지역 가능</option><option value="first_other">1순위 기타지역 가능</option><option value="second">2순위 가능</option><option value="review">검토 필요</option></select>
+          <label class="sr-only" for="status-filter">청약 가능 분류</label><select id="status-filter"><option value="all">전체 일정</option><optgroup id="review-filters" label="공유 검토 상태" disabled hidden><option value="planned">청약 예정</option><option value="skipped">청약 안 할 예정</option><option value="undecided">미검토</option></optgroup><option value="special">특공 후보</option><option value="first_local">1순위 해당지역 가능</option><option value="first_other">1순위 기타지역 가능</option><option value="second">2순위 가능</option><option value="review">검토 필요</option></select>
           <label class="switch"><input type="checkbox" id="saved-only"/><span>관심 <span id="metric-saved">0</span></span></label>
         </div>
       </div>

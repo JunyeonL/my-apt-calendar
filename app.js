@@ -43,28 +43,21 @@ const sample=(day,name,location,city,value)=>{
 const demoData=[sample(4,'수원 그린파크 (예시)','경기','수원시',94500),sample(10,'동탄 센트럴 (예시)','경기','화성시',78000),sample(16,'서초 프리미엄 (예시)','서울','서초구',220000),sample(20,'용인 스카이뷰 (예시)','경기','용인시',87000),sample(26,'송파 리버뷰 (예시)','서울','송파구',195000)];
 const allItems=()=>isDemo?demoData:data.items;
 const bestFor=item=>item.category!=='apt'?assess({kind:'remaining',listing:item},profile):assessGeneral(item,profile);
-const privateOrigin=new URL($('private-calendar').href).origin;
-const privateCalendar=location.origin===privateOrigin;
+const reviewApi=location.origin==='https://junyeonl.github.io'
+  ? 'https://junyeon-apt-review.royalolive14.chatgpt.site/api/reviews' : '/api/reviews';
 const reviewLabels={undecided:'미검토',planned:'청약 예정',skipped:'청약 안 할 예정'};
 let reviews={}, reviewsReady=false, reviewRequest=0, openItem=null, historyOpen=false;
 const reviewFor=id=>reviews[id]||{status:'undecided',routes:[],note:'',revision:0};
-const privateUrl=(id='')=>{
-  const url=new URL('/',privateOrigin);
-  if(id) url.searchParams.set('notice',id);
-  if(monthOffset) url.searchParams.set('next','1');
-  return url.href;
-};
 const routeName=(key,item)=>key==='open'&&item?.category!=='apt'?supplyType(item):routeLabels[key]||key;
 
 function reviewPanel(item) {
   if(isDemo) return '';
-  if(!privateCalendar) return '<section class="review-panel"><h3>내 청약 계획</h3><a class="button review-link" href="'+esc(privateUrl(item.id))+'">이 공고 검토하기</a> <span class="muted">신청 유형과 메모를 저장합니다.</span></section>';
-  if(!reviewsReady) return '<section class="review-panel"><h3>내 청약 계획</h3><p>검토 기록을 불러온 뒤 편집할 수 있습니다.</p><button type="button" id="panel-retry" class="button">다시 불러오기</button></section>';
+  if(!reviewsReady) return '<section class="review-panel"><h3>청약 계획</h3><p>검토 기록을 불러온 뒤 편집할 수 있습니다.</p><button type="button" id="panel-retry" class="button">다시 불러오기</button></section>';
   const rec=reviewFor(item.id);
   const choices=[...new Set([...planRoutes(item),...rec.routes])];
   const statusOptions=Object.entries(reviewLabels).map(([id,label])=>'<label><input type="radio" name="decision" value="'+id+'" '+(rec.status===id?'checked':'')+'><span>'+label+'</span></label>').join('');
   const routeOptions=choices.map(k=>'<label><input type="checkbox" name="route" value="'+k+'" '+(rec.routes.includes(k)?'checked':'')+'>'+esc(routeName(k,item))+'</label>').join('');
-  return '<form class="review-panel" id="review-form"><h3>내 청약 계획</h3><fieldset class="review-decisions"><legend class="sr-only">검토 상태</legend>'+statusOptions+'</fieldset>'
+  return '<form class="review-panel" id="review-form"><h3>청약 계획</h3><fieldset class="review-decisions"><legend class="sr-only">검토 상태</legend>'+statusOptions+'</fieldset>'
     +'<fieldset class="route-picker" '+(rec.status==='planned'?'':'hidden')+'><legend>신청 유형 <small>여러 개 선택 가능</small></legend>'+routeOptions+'</fieldset>'
     +'<label class="note-label" for="review-note">검토 메모</label><textarea id="review-note" rows="2" maxlength="4000" placeholder="예: 84B 신생아 특공, 계약금 일정 확인">'+esc(rec.note)+'</textarea>'
     +'<div class="review-save"><button class="button button-primary" type="submit">검토 저장</button><span id="save-message" role="status">'+(rec.updatedAt?'저장됨 · '+esc(new Date(rec.updatedAt).toLocaleString('ko-KR',{timeZone:'Asia/Seoul'})):'')+'</span></div><div id="review-conflict"></div></form>';
@@ -87,8 +80,8 @@ function bindReview(item) {
     const draft={revision:base,name:item.name,status:status(),note:form.querySelector('textarea').value,
       routes:status()==='planned'?[...form.querySelectorAll('[name=route]:checked')].map(el=>el.value):[]};
     try {
-      const response=await fetch('/api/reviews/'+encodeURIComponent(item.id),{method:'PUT',cache:'no-store',
-        credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify(draft)});
+      const response=await fetch(reviewApi+'/'+encodeURIComponent(item.id),{method:'PUT',cache:'no-store',
+        credentials:'omit',headers:{'Content-Type':'application/json'},body:JSON.stringify(draft)});
       const payload=await response.json();
       if(response.status===409) {
         if(payload.current) reviews[item.id]=payload.current;
@@ -115,7 +108,7 @@ function showHistory() {
   const records=Object.entries(reviews).filter(([,r])=>r.status!=='undecided'||r.note)
     .sort((a,b)=>b[1].updatedAt.localeCompare(a[1].updatedAt));
   const items=new Map(allItems().map(i=>[i.id,i]));
-  $('detail-content').innerHTML='<h2 id="detail-title">내 검토 기록</h2><p class="muted">접수가 끝난 공고도 여기에 남습니다.</p>'
+  $('detail-content').innerHTML='<h2 id="detail-title">공유 검토 기록</h2><p class="muted">접수가 끝난 공고도 여기에 남습니다.</p>'
     +(records.length?'<div class="review-history">'+records.map(([id,r])=>'<article><span class="history-state review-'+r.status+'">'+esc(reviewLabels[r.status])+'</span><strong>'+esc(r.name)+'</strong>'
       +'<small>'+esc((r.routes||[]).map(k=>routeLabels[k]).join(' · '))+'</small>'+(r.note?'<p>'+esc(r.note)+'</p>':'')
       +'<small>'+esc(new Date(r.updatedAt).toLocaleDateString('ko-KR',{timeZone:'Asia/Seoul'}))+'</small>'
@@ -124,20 +117,24 @@ function showHistory() {
   openDialog('modal-backdrop');
 }
 async function loadReviews() {
-  if(!privateCalendar) return;
   const seq=++reviewRequest;
   try {
-    const response=await fetch('/api/reviews',{cache:'no-store',credentials:'same-origin'});
+    const response=await fetch(reviewApi,{cache:'no-store',credentials:'omit'});
     if(!response.ok) throw new Error('load');
     const {records}=await response.json();
     if(!records||typeof records!=='object'||Array.isArray(records)) throw new Error('format');
     if(seq!==reviewRequest) return;
+    let changed=!reviewsReady;
     for(const [id,record] of Object.entries(records)) {
-      if(record.revision>=reviewFor(id).revision) reviews[id]=record;
+      if(record.revision>reviewFor(id).revision) {
+        reviews[id]=record;
+        changed=true;
+      }
     }
     reviewsReady=true;
-    $('review-sync').textContent='개인 검토 달력 · 기기 간 동기화됨';
+    $('review-sync').textContent='공유 검토 기록이 동기화되었습니다.';
     $('reload-reviews').hidden=true;
+    if(!changed) return;
     $('review-counts').hidden=false; $('review-filters').hidden=false; $('review-filters').disabled=false;
     $('metric-help').textContent='아래 자격별 숫자는 미검토 공고만 집계합니다.';
     render();
@@ -145,10 +142,11 @@ async function loadReviews() {
     else if(openItem&&!$('review-form')?.dataset.dirty) openDetail(openItem);
   } catch {
     if(seq!==reviewRequest) return;
-    $('review-sync').textContent=reviewsReady?'동기화 실패 · 마지막으로 불러온 기록을 표시합니다.':'개인 기록을 불러올 수 없습니다. 로그인과 연결을 확인해 주세요.';
+    $('review-sync').textContent=reviewsReady?'동기화 실패 · 마지막으로 불러온 기록을 표시합니다.':'공유 검토 기록을 불러오지 못했습니다. 잠시 뒤 다시 불러와 주세요.';
     $('reload-reviews').hidden=false;
   }
 }
+
 function visibleItem(item) {
   if(region==='capital'&&!['서울','경기','인천'].includes(item.region)) return false;
   if(!['capital','all'].includes(region)&&item.region!==region) return false;
@@ -274,14 +272,11 @@ function initEvents() {
     currentYear=d.getUTCFullYear(); currentMonth=d.getUTCMonth(); render();
   };
   if(new URLSearchParams(location.search).get('next')==='1') selectMonth(1);
-  $('private-calendar').addEventListener('click',e=>{e.currentTarget.href=privateUrl();});
-  if(privateCalendar) {
-    $('private-calendar').hidden=true; $('review-sync').textContent='개인 검토 기록 동기화 중…';
-    $('reload-reviews').addEventListener('click',loadReviews);
-    $('review-history').addEventListener('click',showHistory);
-    document.addEventListener('visibilitychange',()=>{if(!document.hidden) loadReviews();});
-    window.addEventListener('focus',loadReviews);
-  }
+  $('reload-reviews').addEventListener('click',loadReviews);
+  $('review-history').addEventListener('click',showHistory);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden) loadReviews();});
+  window.addEventListener('focus',loadReviews);
+  window.setInterval(()=>{if(!document.hidden) loadReviews();},15000);
   $('previous').addEventListener('click',()=>selectMonth(monthOffset-1));
   $('next').addEventListener('click',()=>selectMonth(monthOffset+1));
   $('this-month').addEventListener('click',()=>selectMonth(0));
@@ -351,7 +346,7 @@ async function boot() {
   if(notice) {
     const match=allItems().find(i=>i.id===notice);
     if(match) openDetail(match);
-    else if(privateCalendar&&reviews[notice]) showHistory();
+    else if(reviews[notice]) showHistory();
   }
 }
 boot();
